@@ -122,6 +122,11 @@ jobs:
         run: xvfb-run --auto-servernum cargo test --manifest-path glib-macros/Cargo.toml
       - name: "glib-macros: build"
         run: cargo build --manifest-path glib-macros/Cargo.toml
+      # gtk3-macros
+      - name: "gtk3-macros: tests"
+        run: xvfb-run --auto-servernum cargo test --manifest-path gtk3-macros/Cargo.toml
+      - name: "gtk3-macros: build"
+        run: cargo build --manifest-path gtk3-macros/Cargo.toml
       # examples
       - name: "examples"
         run: cargo build --manifest-path examples/Cargo.toml --bins --examples --all-features
