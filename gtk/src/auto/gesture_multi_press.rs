@@ -29,7 +29,7 @@ glib::wrapper! {
 
 impl GestureMultiPress {
     #[doc(alias = "gtk_gesture_multi_press_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P) -> GestureMultiPress {
+    pub fn new(widget: &impl IsA<Widget>) -> GestureMultiPress {
         skip_assert_initialized!();
         unsafe {
             Gesture::from_glib_full(ffi::gtk_gesture_multi_press_new(
@@ -71,10 +71,7 @@ impl GestureMultiPress {
     }
 
     #[doc(alias = "pressed")]
-    pub fn connect_pressed<F: Fn(&GestureMultiPress, i32, f64, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_pressed<F: Fn(&Self, i32, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn pressed_trampoline<
             F: Fn(&GestureMultiPress, i32, f64, f64) + 'static,
         >(
@@ -101,10 +98,7 @@ impl GestureMultiPress {
     }
 
     #[doc(alias = "released")]
-    pub fn connect_released<F: Fn(&GestureMultiPress, i32, f64, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_released<F: Fn(&Self, i32, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn released_trampoline<
             F: Fn(&GestureMultiPress, i32, f64, f64) + 'static,
         >(
@@ -131,7 +125,7 @@ impl GestureMultiPress {
     }
 
     #[doc(alias = "stopped")]
-    pub fn connect_stopped<F: Fn(&GestureMultiPress) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_stopped<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn stopped_trampoline<F: Fn(&GestureMultiPress) + 'static>(
             this: *mut ffi::GtkGestureMultiPress,
             f: glib::ffi::gpointer,
@@ -232,7 +226,7 @@ impl GestureMultiPressBuilder {
         self
     }
 
-    pub fn widget<P: IsA<Widget>>(mut self, widget: &P) -> Self {
+    pub fn widget(mut self, widget: &impl IsA<Widget>) -> Self {
         self.widget = Some(widget.clone().upcast());
         self
     }

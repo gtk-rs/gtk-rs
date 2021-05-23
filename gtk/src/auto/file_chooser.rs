@@ -31,7 +31,7 @@ pub trait FileChooserExt: 'static {
     fn add_filter(&self, filter: &FileFilter);
 
     #[doc(alias = "gtk_file_chooser_add_shortcut_folder")]
-    fn add_shortcut_folder<P: AsRef<std::path::Path>>(&self, folder: P) -> Result<(), glib::Error>;
+    fn add_shortcut_folder(&self, folder: impl AsRef<std::path::Path>) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_file_chooser_add_shortcut_folder_uri")]
     fn add_shortcut_folder_uri(&self, uri: &str) -> Result<(), glib::Error>;
@@ -156,9 +156,9 @@ pub trait FileChooserExt: 'static {
     fn remove_filter(&self, filter: &FileFilter);
 
     #[doc(alias = "gtk_file_chooser_remove_shortcut_folder")]
-    fn remove_shortcut_folder<P: AsRef<std::path::Path>>(
+    fn remove_shortcut_folder(
         &self,
-        folder: P,
+        folder: impl AsRef<std::path::Path>,
     ) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_file_chooser_remove_shortcut_folder_uri")]
@@ -168,10 +168,10 @@ pub trait FileChooserExt: 'static {
     fn select_all(&self);
 
     #[doc(alias = "gtk_file_chooser_select_file")]
-    fn select_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error>;
+    fn select_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_file_chooser_select_filename")]
-    fn select_filename<P: AsRef<std::path::Path>>(&self, filename: P) -> bool;
+    fn select_filename(&self, filename: impl AsRef<std::path::Path>) -> bool;
 
     #[doc(alias = "gtk_file_chooser_select_uri")]
     fn select_uri(&self, uri: &str) -> bool;
@@ -188,10 +188,10 @@ pub trait FileChooserExt: 'static {
     fn set_create_folders(&self, create_folders: bool);
 
     #[doc(alias = "gtk_file_chooser_set_current_folder")]
-    fn set_current_folder<P: AsRef<std::path::Path>>(&self, filename: P) -> bool;
+    fn set_current_folder(&self, filename: impl AsRef<std::path::Path>) -> bool;
 
     #[doc(alias = "gtk_file_chooser_set_current_folder_file")]
-    fn set_current_folder_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error>;
+    fn set_current_folder_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_file_chooser_set_current_folder_uri")]
     fn set_current_folder_uri(&self, uri: &str) -> bool;
@@ -203,13 +203,13 @@ pub trait FileChooserExt: 'static {
     fn set_do_overwrite_confirmation(&self, do_overwrite_confirmation: bool);
 
     #[doc(alias = "gtk_file_chooser_set_extra_widget")]
-    fn set_extra_widget<P: IsA<Widget>>(&self, extra_widget: &P);
+    fn set_extra_widget(&self, extra_widget: &impl IsA<Widget>);
 
     #[doc(alias = "gtk_file_chooser_set_file")]
-    fn set_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error>;
+    fn set_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_file_chooser_set_filename")]
-    fn set_filename<P: AsRef<std::path::Path>>(&self, filename: P) -> bool;
+    fn set_filename(&self, filename: impl AsRef<std::path::Path>) -> bool;
 
     #[doc(alias = "gtk_file_chooser_set_filter")]
     fn set_filter(&self, filter: &FileFilter);
@@ -218,7 +218,7 @@ pub trait FileChooserExt: 'static {
     fn set_local_only(&self, local_only: bool);
 
     #[doc(alias = "gtk_file_chooser_set_preview_widget")]
-    fn set_preview_widget<P: IsA<Widget>>(&self, preview_widget: &P);
+    fn set_preview_widget(&self, preview_widget: &impl IsA<Widget>);
 
     #[doc(alias = "gtk_file_chooser_set_preview_widget_active")]
     fn set_preview_widget_active(&self, active: bool);
@@ -239,10 +239,10 @@ pub trait FileChooserExt: 'static {
     fn unselect_all(&self);
 
     #[doc(alias = "gtk_file_chooser_unselect_file")]
-    fn unselect_file<P: IsA<gio::File>>(&self, file: &P);
+    fn unselect_file(&self, file: &impl IsA<gio::File>);
 
     #[doc(alias = "gtk_file_chooser_unselect_filename")]
-    fn unselect_filename<P: AsRef<std::path::Path>>(&self, filename: P);
+    fn unselect_filename(&self, filename: impl AsRef<std::path::Path>);
 
     #[doc(alias = "gtk_file_chooser_unselect_uri")]
     fn unselect_uri(&self, uri: &str);
@@ -310,7 +310,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn add_shortcut_folder<P: AsRef<std::path::Path>>(&self, folder: P) -> Result<(), glib::Error> {
+    fn add_shortcut_folder(&self, folder: impl AsRef<std::path::Path>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
             let _ = ffi::gtk_file_chooser_add_shortcut_folder(
@@ -589,9 +589,9 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn remove_shortcut_folder<P: AsRef<std::path::Path>>(
+    fn remove_shortcut_folder(
         &self,
-        folder: P,
+        folder: impl AsRef<std::path::Path>,
     ) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
@@ -630,7 +630,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn select_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error> {
+    fn select_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
             let _ = ffi::gtk_file_chooser_select_file(
@@ -646,7 +646,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn select_filename<P: AsRef<std::path::Path>>(&self, filename: P) -> bool {
+    fn select_filename(&self, filename: impl AsRef<std::path::Path>) -> bool {
         unsafe {
             from_glib(ffi::gtk_file_chooser_select_filename(
                 self.as_ref().to_glib_none().0,
@@ -691,7 +691,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn set_current_folder<P: AsRef<std::path::Path>>(&self, filename: P) -> bool {
+    fn set_current_folder(&self, filename: impl AsRef<std::path::Path>) -> bool {
         unsafe {
             from_glib(ffi::gtk_file_chooser_set_current_folder(
                 self.as_ref().to_glib_none().0,
@@ -700,7 +700,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn set_current_folder_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error> {
+    fn set_current_folder_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
             let _ = ffi::gtk_file_chooser_set_current_folder_file(
@@ -743,7 +743,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn set_extra_widget<P: IsA<Widget>>(&self, extra_widget: &P) {
+    fn set_extra_widget(&self, extra_widget: &impl IsA<Widget>) {
         unsafe {
             ffi::gtk_file_chooser_set_extra_widget(
                 self.as_ref().to_glib_none().0,
@@ -752,7 +752,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn set_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error> {
+    fn set_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
             let _ = ffi::gtk_file_chooser_set_file(
@@ -768,7 +768,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn set_filename<P: AsRef<std::path::Path>>(&self, filename: P) -> bool {
+    fn set_filename(&self, filename: impl AsRef<std::path::Path>) -> bool {
         unsafe {
             from_glib(ffi::gtk_file_chooser_set_filename(
                 self.as_ref().to_glib_none().0,
@@ -795,7 +795,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn set_preview_widget<P: IsA<Widget>>(&self, preview_widget: &P) {
+    fn set_preview_widget(&self, preview_widget: &impl IsA<Widget>) {
         unsafe {
             ffi::gtk_file_chooser_set_preview_widget(
                 self.as_ref().to_glib_none().0,
@@ -855,7 +855,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn unselect_file<P: IsA<gio::File>>(&self, file: &P) {
+    fn unselect_file(&self, file: &impl IsA<gio::File>) {
         unsafe {
             ffi::gtk_file_chooser_unselect_file(
                 self.as_ref().to_glib_none().0,
@@ -864,7 +864,7 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         }
     }
 
-    fn unselect_filename<P: AsRef<std::path::Path>>(&self, filename: P) {
+    fn unselect_filename(&self, filename: impl AsRef<std::path::Path>) {
         unsafe {
             ffi::gtk_file_chooser_unselect_filename(
                 self.as_ref().to_glib_none().0,
@@ -888,15 +888,12 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         f: F,
     ) -> SignalHandlerId {
         unsafe extern "C" fn confirm_overwrite_trampoline<
-            P,
+            P: IsA<FileChooser>,
             F: Fn(&P) -> FileChooserConfirmation + 'static,
         >(
             this: *mut ffi::GtkFileChooser,
             f: glib::ffi::gpointer,
-        ) -> ffi::GtkFileChooserConfirmation
-        where
-            P: IsA<FileChooser>,
-        {
+        ) -> ffi::GtkFileChooserConfirmation {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref()).into_glib()
         }
@@ -915,12 +912,13 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "current-folder-changed")]
     fn connect_current_folder_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn current_folder_changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn current_folder_changed_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -939,12 +937,10 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "file-activated")]
     fn connect_file_activated<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn file_activated_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn file_activated_trampoline<P: IsA<FileChooser>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFileChooser,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -963,12 +959,13 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "selection-changed")]
     fn connect_selection_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn selection_changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn selection_changed_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -987,12 +984,10 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "update-preview")]
     fn connect_update_preview<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn update_preview_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn update_preview_trampoline<P: IsA<FileChooser>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFileChooser,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1011,13 +1006,11 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "action")]
     fn connect_action_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_action_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_action_trampoline<P: IsA<FileChooser>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1036,13 +1029,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "create-folders")]
     fn connect_create_folders_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_create_folders_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_create_folders_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1064,13 +1058,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn notify_do_overwrite_confirmation_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_do_overwrite_confirmation_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1089,13 +1084,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "extra-widget")]
     fn connect_extra_widget_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_extra_widget_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_extra_widget_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1114,13 +1110,11 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "filter")]
     fn connect_filter_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_filter_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_filter_trampoline<P: IsA<FileChooser>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1139,13 +1133,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "local-only")]
     fn connect_local_only_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_local_only_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_local_only_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1164,13 +1159,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "preview-widget")]
     fn connect_preview_widget_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_preview_widget_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_preview_widget_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1192,13 +1188,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn notify_preview_widget_active_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_preview_widget_active_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1217,13 +1214,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "select-multiple")]
     fn connect_select_multiple_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_select_multiple_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_select_multiple_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1242,13 +1240,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "show-hidden")]
     fn connect_show_hidden_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_hidden_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_hidden_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1267,13 +1266,14 @@ impl<O: IsA<FileChooser>> FileChooserExt for O {
 
     #[doc(alias = "use-preview-label")]
     fn connect_use_preview_label_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_use_preview_label_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_use_preview_label_trampoline<
+            P: IsA<FileChooser>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFileChooser,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FileChooser>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FileChooser::from_glib_borrow(this).unsafe_cast_ref())
         }

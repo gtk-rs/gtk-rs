@@ -34,7 +34,7 @@ glib::wrapper! {
 impl RadioMenuItem {
     #[doc(alias = "gtk_radio_menu_item_new_from_widget")]
     #[doc(alias = "new_from_widget")]
-    pub fn from_widget<P: IsA<RadioMenuItem>>(group: &P) -> RadioMenuItem {
+    pub fn from_widget(group: &impl IsA<RadioMenuItem>) -> RadioMenuItem {
         skip_assert_initialized!();
         unsafe {
             Widget::from_glib_none(ffi::gtk_radio_menu_item_new_from_widget(
@@ -46,8 +46,8 @@ impl RadioMenuItem {
 
     #[doc(alias = "gtk_radio_menu_item_new_with_label_from_widget")]
     #[doc(alias = "new_with_label_from_widget")]
-    pub fn with_label_from_widget<P: IsA<RadioMenuItem>>(
-        group: &P,
+    pub fn with_label_from_widget(
+        group: &impl IsA<RadioMenuItem>,
         label: Option<&str>,
     ) -> RadioMenuItem {
         skip_assert_initialized!();
@@ -62,8 +62,8 @@ impl RadioMenuItem {
 
     #[doc(alias = "gtk_radio_menu_item_new_with_mnemonic_from_widget")]
     #[doc(alias = "new_with_mnemonic_from_widget")]
-    pub fn with_mnemonic_from_widget<P: IsA<RadioMenuItem>>(
-        group: &P,
+    pub fn with_mnemonic_from_widget(
+        group: &impl IsA<RadioMenuItem>,
         label: Option<&str>,
     ) -> RadioMenuItem {
         skip_assert_initialized!();
@@ -318,7 +318,7 @@ impl RadioMenuItemBuilder {
         self
     }
 
-    pub fn submenu<P: IsA<Menu>>(mut self, submenu: &P) -> Self {
+    pub fn submenu(mut self, submenu: &impl IsA<Menu>) -> Self {
         self.submenu = Some(submenu.clone().upcast());
         self
     }
@@ -333,7 +333,7 @@ impl RadioMenuItemBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -455,7 +455,7 @@ impl RadioMenuItemBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -524,7 +524,7 @@ pub trait RadioMenuItemExt: 'static {
     fn group(&self) -> Vec<RadioMenuItem>;
 
     #[doc(alias = "gtk_radio_menu_item_join_group")]
-    fn join_group<P: IsA<RadioMenuItem>>(&self, group_source: Option<&P>);
+    fn join_group(&self, group_source: Option<&impl IsA<RadioMenuItem>>);
 
     #[doc(alias = "group-changed")]
     fn connect_group_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId;
@@ -539,7 +539,7 @@ impl<O: IsA<RadioMenuItem>> RadioMenuItemExt for O {
         }
     }
 
-    fn join_group<P: IsA<RadioMenuItem>>(&self, group_source: Option<&P>) {
+    fn join_group(&self, group_source: Option<&impl IsA<RadioMenuItem>>) {
         unsafe {
             ffi::gtk_radio_menu_item_join_group(
                 self.as_ref().to_glib_none().0,
@@ -550,12 +550,13 @@ impl<O: IsA<RadioMenuItem>> RadioMenuItemExt for O {
 
     #[doc(alias = "group-changed")]
     fn connect_group_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn group_changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn group_changed_trampoline<
+            P: IsA<RadioMenuItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkRadioMenuItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<RadioMenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&RadioMenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }

@@ -38,9 +38,9 @@ glib::wrapper! {
 
 impl ScrolledWindow {
     #[doc(alias = "gtk_scrolled_window_new")]
-    pub fn new<P: IsA<Adjustment>, Q: IsA<Adjustment>>(
-        hadjustment: Option<&P>,
-        vadjustment: Option<&Q>,
+    pub fn new(
+        hadjustment: Option<&impl IsA<Adjustment>>,
+        vadjustment: Option<&impl IsA<Adjustment>>,
     ) -> ScrolledWindow {
         assert_initialized_main_thread!();
         unsafe {
@@ -292,7 +292,7 @@ impl ScrolledWindowBuilder {
             .expect("Failed to create an instance of ScrolledWindow")
     }
 
-    pub fn hadjustment<P: IsA<Adjustment>>(mut self, hadjustment: &P) -> Self {
+    pub fn hadjustment(mut self, hadjustment: &impl IsA<Adjustment>) -> Self {
         self.hadjustment = Some(hadjustment.clone().upcast());
         self
     }
@@ -355,7 +355,7 @@ impl ScrolledWindowBuilder {
         self
     }
 
-    pub fn vadjustment<P: IsA<Adjustment>>(mut self, vadjustment: &P) -> Self {
+    pub fn vadjustment(mut self, vadjustment: &impl IsA<Adjustment>) -> Self {
         self.vadjustment = Some(vadjustment.clone().upcast());
         self
     }
@@ -375,7 +375,7 @@ impl ScrolledWindowBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -497,7 +497,7 @@ impl ScrolledWindowBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -627,7 +627,7 @@ pub trait ScrolledWindowExt: 'static {
     fn set_capture_button_press(&self, capture_button_press: bool);
 
     #[doc(alias = "gtk_scrolled_window_set_hadjustment")]
-    fn set_hadjustment<P: IsA<Adjustment>>(&self, hadjustment: Option<&P>);
+    fn set_hadjustment(&self, hadjustment: Option<&impl IsA<Adjustment>>);
 
     #[doc(alias = "gtk_scrolled_window_set_kinetic_scrolling")]
     fn set_kinetic_scrolling(&self, kinetic_scrolling: bool);
@@ -671,7 +671,7 @@ pub trait ScrolledWindowExt: 'static {
     fn set_shadow_type(&self, type_: ShadowType);
 
     #[doc(alias = "gtk_scrolled_window_set_vadjustment")]
-    fn set_vadjustment<P: IsA<Adjustment>>(&self, vadjustment: Option<&P>);
+    fn set_vadjustment(&self, vadjustment: Option<&impl IsA<Adjustment>>);
 
     #[doc(alias = "gtk_scrolled_window_unset_placement")]
     fn unset_placement(&self);
@@ -910,7 +910,7 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
         }
     }
 
-    fn set_hadjustment<P: IsA<Adjustment>>(&self, hadjustment: Option<&P>) {
+    fn set_hadjustment(&self, hadjustment: Option<&impl IsA<Adjustment>>) {
         unsafe {
             ffi::gtk_scrolled_window_set_hadjustment(
                 self.as_ref().to_glib_none().0,
@@ -1015,7 +1015,7 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
         }
     }
 
-    fn set_vadjustment<P: IsA<Adjustment>>(&self, vadjustment: Option<&P>) {
+    fn set_vadjustment(&self, vadjustment: Option<&impl IsA<Adjustment>>) {
         unsafe {
             ffi::gtk_scrolled_window_set_vadjustment(
                 self.as_ref().to_glib_none().0,
@@ -1104,13 +1104,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "edge-overshot")]
     fn connect_edge_overshot<F: Fn(&Self, PositionType) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn edge_overshot_trampoline<P, F: Fn(&P, PositionType) + 'static>(
+        unsafe extern "C" fn edge_overshot_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P, PositionType) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             pos: ffi::GtkPositionType,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1132,13 +1133,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "edge-reached")]
     fn connect_edge_reached<F: Fn(&Self, PositionType) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn edge_reached_trampoline<P, F: Fn(&P, PositionType) + 'static>(
+        unsafe extern "C" fn edge_reached_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P, PositionType) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             pos: ffi::GtkPositionType,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1163,13 +1165,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn move_focus_out_trampoline<P, F: Fn(&P, DirectionType) + 'static>(
+        unsafe extern "C" fn move_focus_out_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P, DirectionType) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             direction_type: ffi::GtkDirectionType,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1203,17 +1206,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
         f: F,
     ) -> SignalHandlerId {
         unsafe extern "C" fn scroll_child_trampoline<
-            P,
+            P: IsA<ScrolledWindow>,
             F: Fn(&P, ScrollType, bool) -> bool + 'static,
         >(
             this: *mut ffi::GtkScrolledWindow,
             scroll: ffi::GtkScrollType,
             horizontal: glib::ffi::gboolean,
             f: glib::ffi::gpointer,
-        ) -> glib::ffi::gboolean
-        where
-            P: IsA<ScrolledWindow>,
-        {
+        ) -> glib::ffi::gboolean {
             let f: &F = &*(f as *const F);
             f(
                 &ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1248,13 +1248,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "hadjustment")]
     fn connect_hadjustment_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_hadjustment_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_hadjustment_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1273,13 +1274,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "hscrollbar-policy")]
     fn connect_hscrollbar_policy_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_hscrollbar_policy_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_hscrollbar_policy_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1298,13 +1300,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "kinetic-scrolling")]
     fn connect_kinetic_scrolling_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_kinetic_scrolling_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_kinetic_scrolling_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1325,13 +1328,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "max-content-height")]
     fn connect_max_content_height_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_max_content_height_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_max_content_height_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1352,13 +1356,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "max-content-width")]
     fn connect_max_content_width_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_max_content_width_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_max_content_width_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1377,13 +1382,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "min-content-height")]
     fn connect_min_content_height_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_min_content_height_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_min_content_height_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1402,13 +1408,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "min-content-width")]
     fn connect_min_content_width_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_min_content_width_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_min_content_width_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1427,13 +1434,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "overlay-scrolling")]
     fn connect_overlay_scrolling_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_overlay_scrolling_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_overlay_scrolling_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1457,13 +1465,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn notify_propagate_natural_height_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_propagate_natural_height_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1487,13 +1496,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn notify_propagate_natural_width_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_propagate_natural_width_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1512,13 +1522,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "shadow-type")]
     fn connect_shadow_type_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_shadow_type_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_shadow_type_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1537,13 +1548,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "vadjustment")]
     fn connect_vadjustment_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_vadjustment_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_vadjustment_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1562,13 +1574,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "vscrollbar-policy")]
     fn connect_vscrollbar_policy_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_vscrollbar_policy_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_vscrollbar_policy_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1587,13 +1600,14 @@ impl<O: IsA<ScrolledWindow>> ScrolledWindowExt for O {
 
     #[doc(alias = "window-placement")]
     fn connect_window_placement_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_window_placement_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_window_placement_trampoline<
+            P: IsA<ScrolledWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkScrolledWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ScrolledWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ScrolledWindow::from_glib_borrow(this).unsafe_cast_ref())
         }

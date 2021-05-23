@@ -133,10 +133,7 @@ impl PopoverMenu {
     }
 
     #[doc(alias = "visible-submenu")]
-    pub fn connect_visible_submenu_notify<F: Fn(&PopoverMenu) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_visible_submenu_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_visible_submenu_trampoline<F: Fn(&PopoverMenu) + 'static>(
             this: *mut ffi::GtkPopoverMenu,
             _param_spec: glib::ffi::gpointer,
@@ -388,7 +385,7 @@ impl PopoverMenuBuilder {
         self
     }
 
-    pub fn relative_to<P: IsA<Widget>>(mut self, relative_to: &P) -> Self {
+    pub fn relative_to(mut self, relative_to: &impl IsA<Widget>) -> Self {
         self.relative_to = Some(relative_to.clone().upcast());
         self
     }
@@ -404,7 +401,7 @@ impl PopoverMenuBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -526,7 +523,7 @@ impl PopoverMenuBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }

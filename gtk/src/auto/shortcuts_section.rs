@@ -143,7 +143,7 @@ impl ShortcutsSection {
     }
 
     #[doc(alias = "change-current-page")]
-    pub fn connect_change_current_page<F: Fn(&ShortcutsSection, i32) -> bool + 'static>(
+    pub fn connect_change_current_page<F: Fn(&Self, i32) -> bool + 'static>(
         &self,
         f: F,
     ) -> SignalHandlerId {
@@ -182,10 +182,7 @@ impl ShortcutsSection {
     }
 
     #[doc(alias = "max-height")]
-    pub fn connect_max_height_notify<F: Fn(&ShortcutsSection) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_max_height_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_max_height_trampoline<F: Fn(&ShortcutsSection) + 'static>(
             this: *mut ffi::GtkShortcutsSection,
             _param_spec: glib::ffi::gpointer,
@@ -208,10 +205,7 @@ impl ShortcutsSection {
     }
 
     #[doc(alias = "section-name")]
-    pub fn connect_section_name_notify<F: Fn(&ShortcutsSection) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_section_name_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_section_name_trampoline<F: Fn(&ShortcutsSection) + 'static>(
             this: *mut ffi::GtkShortcutsSection,
             _param_spec: glib::ffi::gpointer,
@@ -234,10 +228,7 @@ impl ShortcutsSection {
     }
 
     #[doc(alias = "title")]
-    pub fn connect_title_notify<F: Fn(&ShortcutsSection) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_title_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_title_trampoline<F: Fn(&ShortcutsSection) + 'static>(
             this: *mut ffi::GtkShortcutsSection,
             _param_spec: glib::ffi::gpointer,
@@ -260,10 +251,7 @@ impl ShortcutsSection {
     }
 
     #[doc(alias = "view-name")]
-    pub fn connect_view_name_notify<F: Fn(&ShortcutsSection) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_view_name_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_view_name_trampoline<F: Fn(&ShortcutsSection) + 'static>(
             this: *mut ffi::GtkShortcutsSection,
             _param_spec: glib::ffi::gpointer,
@@ -522,7 +510,7 @@ impl ShortcutsSectionBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -644,7 +632,7 @@ impl ShortcutsSectionBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }

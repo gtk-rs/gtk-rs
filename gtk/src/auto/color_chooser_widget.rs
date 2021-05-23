@@ -269,7 +269,7 @@ impl ColorChooserWidgetBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -391,7 +391,7 @@ impl ColorChooserWidgetBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -497,13 +497,14 @@ impl<O: IsA<ColorChooserWidget>> ColorChooserWidgetExt for O {
 
     #[doc(alias = "show-editor")]
     fn connect_show_editor_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_editor_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_editor_trampoline<
+            P: IsA<ColorChooserWidget>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkColorChooserWidget,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ColorChooserWidget>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ColorChooserWidget::from_glib_borrow(this).unsafe_cast_ref())
         }

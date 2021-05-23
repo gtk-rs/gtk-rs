@@ -57,7 +57,7 @@ pub trait NativeDialogExt: 'static {
     fn set_title(&self, title: &str);
 
     #[doc(alias = "gtk_native_dialog_set_transient_for")]
-    fn set_transient_for<P: IsA<Window>>(&self, parent: Option<&P>);
+    fn set_transient_for(&self, parent: Option<&impl IsA<Window>>);
 
     #[doc(alias = "gtk_native_dialog_show")]
     fn show(&self);
@@ -156,7 +156,7 @@ impl<O: IsA<NativeDialog>> NativeDialogExt for O {
         }
     }
 
-    fn set_transient_for<P: IsA<Window>>(&self, parent: Option<&P>) {
+    fn set_transient_for(&self, parent: Option<&impl IsA<Window>>) {
         unsafe {
             ffi::gtk_native_dialog_set_transient_for(
                 self.as_ref().to_glib_none().0,
@@ -187,13 +187,14 @@ impl<O: IsA<NativeDialog>> NativeDialogExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
     #[doc(alias = "response")]
     fn connect_response<F: Fn(&Self, ResponseType) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn response_trampoline<P, F: Fn(&P, ResponseType) + 'static>(
+        unsafe extern "C" fn response_trampoline<
+            P: IsA<NativeDialog>,
+            F: Fn(&P, ResponseType) + 'static,
+        >(
             this: *mut ffi::GtkNativeDialog,
             response_id: ffi::GtkResponseType,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<NativeDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &NativeDialog::from_glib_borrow(this).unsafe_cast_ref(),
@@ -217,13 +218,11 @@ impl<O: IsA<NativeDialog>> NativeDialogExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
     #[doc(alias = "modal")]
     fn connect_modal_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_modal_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_modal_trampoline<P: IsA<NativeDialog>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkNativeDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<NativeDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&NativeDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -244,13 +243,11 @@ impl<O: IsA<NativeDialog>> NativeDialogExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
     #[doc(alias = "title")]
     fn connect_title_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_title_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_title_trampoline<P: IsA<NativeDialog>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkNativeDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<NativeDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&NativeDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -271,13 +268,14 @@ impl<O: IsA<NativeDialog>> NativeDialogExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
     #[doc(alias = "transient-for")]
     fn connect_transient_for_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_transient_for_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_transient_for_trampoline<
+            P: IsA<NativeDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkNativeDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<NativeDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&NativeDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -298,13 +296,14 @@ impl<O: IsA<NativeDialog>> NativeDialogExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
     #[doc(alias = "visible")]
     fn connect_visible_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_visible_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_visible_trampoline<
+            P: IsA<NativeDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkNativeDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<NativeDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&NativeDialog::from_glib_borrow(this).unsafe_cast_ref())
         }

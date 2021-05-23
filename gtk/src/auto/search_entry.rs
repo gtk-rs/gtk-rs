@@ -393,7 +393,7 @@ impl SearchEntryBuilder {
         self
     }
 
-    pub fn buffer<P: IsA<EntryBuffer>>(mut self, buffer: &P) -> Self {
+    pub fn buffer(mut self, buffer: &impl IsA<EntryBuffer>) -> Self {
         self.buffer = Some(buffer.clone().upcast());
         self
     }
@@ -403,7 +403,7 @@ impl SearchEntryBuilder {
         self
     }
 
-    pub fn completion<P: IsA<EntryCompletion>>(mut self, completion: &P) -> Self {
+    pub fn completion(mut self, completion: &impl IsA<EntryCompletion>) -> Self {
         self.completion = Some(completion.clone().upcast());
         self
     }
@@ -478,7 +478,7 @@ impl SearchEntryBuilder {
         self
     }
 
-    pub fn primary_icon_gicon<P: IsA<gio::Icon>>(mut self, primary_icon_gicon: &P) -> Self {
+    pub fn primary_icon_gicon(mut self, primary_icon_gicon: &impl IsA<gio::Icon>) -> Self {
         self.primary_icon_gicon = Some(primary_icon_gicon.clone().upcast());
         self
     }
@@ -523,7 +523,7 @@ impl SearchEntryBuilder {
         self
     }
 
-    pub fn secondary_icon_gicon<P: IsA<gio::Icon>>(mut self, secondary_icon_gicon: &P) -> Self {
+    pub fn secondary_icon_gicon(mut self, secondary_icon_gicon: &impl IsA<gio::Icon>) -> Self {
         self.secondary_icon_gicon = Some(secondary_icon_gicon.clone().upcast());
         self
     }
@@ -706,7 +706,7 @@ impl SearchEntryBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -799,12 +799,10 @@ impl<O: IsA<SearchEntry>> SearchEntryExt for O {
 
     #[doc(alias = "next-match")]
     fn connect_next_match<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn next_match_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn next_match_trampoline<P: IsA<SearchEntry>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkSearchEntry,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SearchEntry>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SearchEntry::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -831,12 +829,10 @@ impl<O: IsA<SearchEntry>> SearchEntryExt for O {
 
     #[doc(alias = "previous-match")]
     fn connect_previous_match<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn previous_match_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn previous_match_trampoline<P: IsA<SearchEntry>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkSearchEntry,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SearchEntry>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SearchEntry::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -863,12 +859,10 @@ impl<O: IsA<SearchEntry>> SearchEntryExt for O {
 
     #[doc(alias = "search-changed")]
     fn connect_search_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn search_changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn search_changed_trampoline<P: IsA<SearchEntry>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkSearchEntry,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SearchEntry>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SearchEntry::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -887,12 +881,10 @@ impl<O: IsA<SearchEntry>> SearchEntryExt for O {
 
     #[doc(alias = "stop-search")]
     fn connect_stop_search<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn stop_search_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn stop_search_trampoline<P: IsA<SearchEntry>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkSearchEntry,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SearchEntry>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SearchEntry::from_glib_borrow(this).unsafe_cast_ref())
         }

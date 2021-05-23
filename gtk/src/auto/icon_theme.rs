@@ -57,7 +57,7 @@ pub trait IconThemeExt: 'static {
     fn add_resource_path(&self, path: &str);
 
     #[doc(alias = "gtk_icon_theme_append_search_path")]
-    fn append_search_path<P: AsRef<std::path::Path>>(&self, path: P);
+    fn append_search_path(&self, path: impl AsRef<std::path::Path>);
 
     #[doc(alias = "gtk_icon_theme_get_example_icon_name")]
     #[doc(alias = "get_example_icon_name")]
@@ -100,17 +100,17 @@ pub trait IconThemeExt: 'static {
     ) -> Result<Option<cairo::Surface>, glib::Error>;
 
     #[doc(alias = "gtk_icon_theme_lookup_by_gicon")]
-    fn lookup_by_gicon<P: IsA<gio::Icon>>(
+    fn lookup_by_gicon(
         &self,
-        icon: &P,
+        icon: &impl IsA<gio::Icon>,
         size: i32,
         flags: IconLookupFlags,
     ) -> Option<IconInfo>;
 
     #[doc(alias = "gtk_icon_theme_lookup_by_gicon_for_scale")]
-    fn lookup_by_gicon_for_scale<P: IsA<gio::Icon>>(
+    fn lookup_by_gicon_for_scale(
         &self,
-        icon: &P,
+        icon: &impl IsA<gio::Icon>,
         size: i32,
         scale: i32,
         flags: IconLookupFlags,
@@ -129,7 +129,7 @@ pub trait IconThemeExt: 'static {
     ) -> Option<IconInfo>;
 
     #[doc(alias = "gtk_icon_theme_prepend_search_path")]
-    fn prepend_search_path<P: AsRef<std::path::Path>>(&self, path: P);
+    fn prepend_search_path(&self, path: impl AsRef<std::path::Path>);
 
     #[doc(alias = "gtk_icon_theme_rescan_if_needed")]
     fn rescan_if_needed(&self) -> bool;
@@ -154,7 +154,7 @@ impl<O: IsA<IconTheme>> IconThemeExt for O {
         }
     }
 
-    fn append_search_path<P: AsRef<std::path::Path>>(&self, path: P) {
+    fn append_search_path(&self, path: impl AsRef<std::path::Path>) {
         unsafe {
             ffi::gtk_icon_theme_append_search_path(
                 self.as_ref().to_glib_none().0,
@@ -272,9 +272,9 @@ impl<O: IsA<IconTheme>> IconThemeExt for O {
         }
     }
 
-    fn lookup_by_gicon<P: IsA<gio::Icon>>(
+    fn lookup_by_gicon(
         &self,
-        icon: &P,
+        icon: &impl IsA<gio::Icon>,
         size: i32,
         flags: IconLookupFlags,
     ) -> Option<IconInfo> {
@@ -288,9 +288,9 @@ impl<O: IsA<IconTheme>> IconThemeExt for O {
         }
     }
 
-    fn lookup_by_gicon_for_scale<P: IsA<gio::Icon>>(
+    fn lookup_by_gicon_for_scale(
         &self,
-        icon: &P,
+        icon: &impl IsA<gio::Icon>,
         size: i32,
         scale: i32,
         flags: IconLookupFlags,
@@ -335,7 +335,7 @@ impl<O: IsA<IconTheme>> IconThemeExt for O {
         }
     }
 
-    fn prepend_search_path<P: AsRef<std::path::Path>>(&self, path: P) {
+    fn prepend_search_path(&self, path: impl AsRef<std::path::Path>) {
         unsafe {
             ffi::gtk_icon_theme_prepend_search_path(
                 self.as_ref().to_glib_none().0,
@@ -369,12 +369,10 @@ impl<O: IsA<IconTheme>> IconThemeExt for O {
 
     #[doc(alias = "changed")]
     fn connect_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn changed_trampoline<P: IsA<IconTheme>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconTheme,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconTheme>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconTheme::from_glib_borrow(this).unsafe_cast_ref())
         }

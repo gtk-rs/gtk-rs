@@ -236,7 +236,7 @@ impl SearchBarBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -358,7 +358,7 @@ impl SearchBarBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -413,7 +413,7 @@ pub const NONE_SEARCH_BAR: Option<&SearchBar> = None;
 
 pub trait SearchBarExt: 'static {
     #[doc(alias = "gtk_search_bar_connect_entry")]
-    fn connect_entry<P: IsA<Entry>>(&self, entry: &P);
+    fn connect_entry(&self, entry: &impl IsA<Entry>);
 
     #[doc(alias = "gtk_search_bar_get_search_mode")]
     #[doc(alias = "get_search_mode")]
@@ -446,7 +446,7 @@ pub trait SearchBarExt: 'static {
 }
 
 impl<O: IsA<SearchBar>> SearchBarExt for O {
-    fn connect_entry<P: IsA<Entry>>(&self, entry: &P) {
+    fn connect_entry(&self, entry: &impl IsA<Entry>) {
         unsafe {
             ffi::gtk_search_bar_connect_entry(
                 self.as_ref().to_glib_none().0,
@@ -524,13 +524,14 @@ impl<O: IsA<SearchBar>> SearchBarExt for O {
 
     #[doc(alias = "search-mode-enabled")]
     fn connect_search_mode_enabled_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_search_mode_enabled_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_search_mode_enabled_trampoline<
+            P: IsA<SearchBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkSearchBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SearchBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SearchBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -549,13 +550,14 @@ impl<O: IsA<SearchBar>> SearchBarExt for O {
 
     #[doc(alias = "show-close-button")]
     fn connect_show_close_button_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_close_button_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_close_button_trampoline<
+            P: IsA<SearchBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkSearchBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SearchBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SearchBar::from_glib_borrow(this).unsafe_cast_ref())
         }

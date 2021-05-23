@@ -30,7 +30,7 @@ glib::wrapper! {
 
 impl GestureSwipe {
     #[doc(alias = "gtk_gesture_swipe_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P) -> GestureSwipe {
+    pub fn new(widget: &impl IsA<Widget>) -> GestureSwipe {
         skip_assert_initialized!();
         unsafe {
             Gesture::from_glib_full(ffi::gtk_gesture_swipe_new(widget.as_ref().to_glib_none().0))
@@ -67,7 +67,7 @@ impl GestureSwipe {
     }
 
     #[doc(alias = "swipe")]
-    pub fn connect_swipe<F: Fn(&GestureSwipe, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_swipe<F: Fn(&Self, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn swipe_trampoline<F: Fn(&GestureSwipe, f64, f64) + 'static>(
             this: *mut ffi::GtkGestureSwipe,
             velocity_x: libc::c_double,
@@ -170,7 +170,7 @@ impl GestureSwipeBuilder {
         self
     }
 
-    pub fn widget<P: IsA<Widget>>(mut self, widget: &P) -> Self {
+    pub fn widget(mut self, widget: &impl IsA<Widget>) -> Self {
         self.widget = Some(widget.clone().upcast());
         self
     }

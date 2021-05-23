@@ -86,7 +86,7 @@ impl CellAreaBoxBuilder {
         self
     }
 
-    pub fn focus_cell<P: IsA<CellRenderer>>(mut self, focus_cell: &P) -> Self {
+    pub fn focus_cell(mut self, focus_cell: &impl IsA<CellRenderer>) -> Self {
         self.focus_cell = Some(focus_cell.clone().upcast());
         self
     }
@@ -105,16 +105,10 @@ pub trait CellAreaBoxExt: 'static {
     fn spacing(&self) -> i32;
 
     #[doc(alias = "gtk_cell_area_box_pack_end")]
-    fn pack_end<P: IsA<CellRenderer>>(&self, renderer: &P, expand: bool, align: bool, fixed: bool);
+    fn pack_end(&self, renderer: &impl IsA<CellRenderer>, expand: bool, align: bool, fixed: bool);
 
     #[doc(alias = "gtk_cell_area_box_pack_start")]
-    fn pack_start<P: IsA<CellRenderer>>(
-        &self,
-        renderer: &P,
-        expand: bool,
-        align: bool,
-        fixed: bool,
-    );
+    fn pack_start(&self, renderer: &impl IsA<CellRenderer>, expand: bool, align: bool, fixed: bool);
 
     #[doc(alias = "gtk_cell_area_box_set_spacing")]
     fn set_spacing(&self, spacing: i32);
@@ -128,7 +122,7 @@ impl<O: IsA<CellAreaBox>> CellAreaBoxExt for O {
         unsafe { ffi::gtk_cell_area_box_get_spacing(self.as_ref().to_glib_none().0) }
     }
 
-    fn pack_end<P: IsA<CellRenderer>>(&self, renderer: &P, expand: bool, align: bool, fixed: bool) {
+    fn pack_end(&self, renderer: &impl IsA<CellRenderer>, expand: bool, align: bool, fixed: bool) {
         unsafe {
             ffi::gtk_cell_area_box_pack_end(
                 self.as_ref().to_glib_none().0,
@@ -140,9 +134,9 @@ impl<O: IsA<CellAreaBox>> CellAreaBoxExt for O {
         }
     }
 
-    fn pack_start<P: IsA<CellRenderer>>(
+    fn pack_start(
         &self,
-        renderer: &P,
+        renderer: &impl IsA<CellRenderer>,
         expand: bool,
         align: bool,
         fixed: bool,
@@ -166,13 +160,11 @@ impl<O: IsA<CellAreaBox>> CellAreaBoxExt for O {
 
     #[doc(alias = "spacing")]
     fn connect_spacing_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_spacing_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_spacing_trampoline<P: IsA<CellAreaBox>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkCellAreaBox,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<CellAreaBox>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&CellAreaBox::from_glib_borrow(this).unsafe_cast_ref())
         }

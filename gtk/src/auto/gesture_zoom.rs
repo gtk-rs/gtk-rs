@@ -28,7 +28,7 @@ glib::wrapper! {
 
 impl GestureZoom {
     #[doc(alias = "gtk_gesture_zoom_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P) -> GestureZoom {
+    pub fn new(widget: &impl IsA<Widget>) -> GestureZoom {
         skip_assert_initialized!();
         unsafe {
             Gesture::from_glib_full(ffi::gtk_gesture_zoom_new(widget.as_ref().to_glib_none().0))
@@ -50,10 +50,7 @@ impl GestureZoom {
     }
 
     #[doc(alias = "scale-changed")]
-    pub fn connect_scale_changed<F: Fn(&GestureZoom, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_scale_changed<F: Fn(&Self, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn scale_changed_trampoline<F: Fn(&GestureZoom, f64) + 'static>(
             this: *mut ffi::GtkGestureZoom,
             scale: libc::c_double,
@@ -128,7 +125,7 @@ impl GestureZoomBuilder {
         self
     }
 
-    pub fn widget<P: IsA<Widget>>(mut self, widget: &P) -> Self {
+    pub fn widget(mut self, widget: &impl IsA<Widget>) -> Self {
         self.widget = Some(widget.clone().upcast());
         self
     }

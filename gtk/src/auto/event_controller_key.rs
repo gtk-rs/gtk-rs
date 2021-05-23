@@ -25,7 +25,7 @@ glib::wrapper! {
 
 impl EventControllerKey {
     #[doc(alias = "gtk_event_controller_key_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P) -> EventControllerKey {
+    pub fn new(widget: &impl IsA<Widget>) -> EventControllerKey {
         skip_assert_initialized!();
         unsafe {
             EventController::from_glib_full(ffi::gtk_event_controller_key_new(
@@ -36,7 +36,7 @@ impl EventControllerKey {
     }
 
     #[doc(alias = "gtk_event_controller_key_forward")]
-    pub fn forward<P: IsA<Widget>>(&self, widget: &P) -> bool {
+    pub fn forward(&self, widget: &impl IsA<Widget>) -> bool {
         unsafe {
             from_glib(ffi::gtk_event_controller_key_forward(
                 self.to_glib_none().0,
@@ -62,7 +62,7 @@ impl EventControllerKey {
     }
 
     #[doc(alias = "gtk_event_controller_key_set_im_context")]
-    pub fn set_im_context<P: IsA<IMContext>>(&self, im_context: &P) {
+    pub fn set_im_context(&self, im_context: &impl IsA<IMContext>) {
         unsafe {
             ffi::gtk_event_controller_key_set_im_context(
                 self.to_glib_none().0,
@@ -72,7 +72,7 @@ impl EventControllerKey {
     }
 
     #[doc(alias = "focus-in")]
-    pub fn connect_focus_in<F: Fn(&EventControllerKey) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_focus_in<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn focus_in_trampoline<F: Fn(&EventControllerKey) + 'static>(
             this: *mut ffi::GtkEventControllerKey,
             f: glib::ffi::gpointer,
@@ -94,7 +94,7 @@ impl EventControllerKey {
     }
 
     #[doc(alias = "focus-out")]
-    pub fn connect_focus_out<F: Fn(&EventControllerKey) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_focus_out<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn focus_out_trampoline<F: Fn(&EventControllerKey) + 'static>(
             this: *mut ffi::GtkEventControllerKey,
             f: glib::ffi::gpointer,
@@ -116,7 +116,7 @@ impl EventControllerKey {
     }
 
     #[doc(alias = "im-update")]
-    pub fn connect_im_update<F: Fn(&EventControllerKey) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_im_update<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn im_update_trampoline<F: Fn(&EventControllerKey) + 'static>(
             this: *mut ffi::GtkEventControllerKey,
             f: glib::ffi::gpointer,
@@ -140,9 +140,7 @@ impl EventControllerKey {
     #[cfg(any(feature = "v3_24", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_24")))]
     #[doc(alias = "key-pressed")]
-    pub fn connect_key_pressed<
-        F: Fn(&EventControllerKey, u32, u32, gdk::ModifierType) -> bool + 'static,
-    >(
+    pub fn connect_key_pressed<F: Fn(&Self, u32, u32, gdk::ModifierType) -> bool + 'static>(
         &self,
         f: F,
     ) -> SignalHandlerId {
@@ -174,9 +172,7 @@ impl EventControllerKey {
     #[cfg(any(feature = "v3_24", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_24")))]
     #[doc(alias = "key-released")]
-    pub fn connect_key_released<
-        F: Fn(&EventControllerKey, u32, u32, gdk::ModifierType) + 'static,
-    >(
+    pub fn connect_key_released<F: Fn(&Self, u32, u32, gdk::ModifierType) + 'static>(
         &self,
         f: F,
     ) -> SignalHandlerId {
@@ -206,7 +202,7 @@ impl EventControllerKey {
     }
 
     #[doc(alias = "modifiers")]
-    pub fn connect_modifiers<F: Fn(&EventControllerKey, gdk::ModifierType) -> bool + 'static>(
+    pub fn connect_modifiers<F: Fn(&Self, gdk::ModifierType) -> bool + 'static>(
         &self,
         f: F,
     ) -> SignalHandlerId {

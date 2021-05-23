@@ -42,7 +42,7 @@ impl RecentChooserMenu {
 
     #[doc(alias = "gtk_recent_chooser_menu_new_for_manager")]
     #[doc(alias = "new_for_manager")]
-    pub fn for_manager<P: IsA<RecentManager>>(manager: &P) -> RecentChooserMenu {
+    pub fn for_manager(manager: &impl IsA<RecentManager>) -> RecentChooserMenu {
         skip_assert_initialized!();
         unsafe {
             Widget::from_glib_none(ffi::gtk_recent_chooser_menu_new_for_manager(
@@ -335,7 +335,7 @@ impl RecentChooserMenuBuilder {
         self
     }
 
-    pub fn accel_group<P: IsA<AccelGroup>>(mut self, accel_group: &P) -> Self {
+    pub fn accel_group(mut self, accel_group: &impl IsA<AccelGroup>) -> Self {
         self.accel_group = Some(accel_group.clone().upcast());
         self
     }
@@ -357,7 +357,7 @@ impl RecentChooserMenuBuilder {
         self
     }
 
-    pub fn attach_widget<P: IsA<Widget>>(mut self, attach_widget: &P) -> Self {
+    pub fn attach_widget(mut self, attach_widget: &impl IsA<Widget>) -> Self {
         self.attach_widget = Some(attach_widget.clone().upcast());
         self
     }
@@ -403,7 +403,7 @@ impl RecentChooserMenuBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -525,7 +525,7 @@ impl RecentChooserMenuBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -590,7 +590,7 @@ impl RecentChooserMenuBuilder {
         self
     }
 
-    pub fn recent_manager<P: IsA<RecentManager>>(mut self, recent_manager: &P) -> Self {
+    pub fn recent_manager(mut self, recent_manager: &impl IsA<RecentManager>) -> Self {
         self.recent_manager = Some(recent_manager.clone().upcast());
         self
     }
@@ -660,13 +660,14 @@ impl<O: IsA<RecentChooserMenu>> RecentChooserMenuExt for O {
 
     #[doc(alias = "show-numbers")]
     fn connect_show_numbers_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_numbers_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_numbers_trampoline<
+            P: IsA<RecentChooserMenu>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkRecentChooserMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<RecentChooserMenu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&RecentChooserMenu::from_glib_borrow(this).unsafe_cast_ref())
         }

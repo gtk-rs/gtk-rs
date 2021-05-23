@@ -272,7 +272,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "active")]
-    pub fn connect_active_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_active_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_active_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -295,7 +295,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "centered")]
-    pub fn connect_centered_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_centered_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_centered_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -318,7 +318,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "icon")]
-    pub fn connect_icon_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_icon_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_icon_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -341,7 +341,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "iconic")]
-    pub fn connect_iconic_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_iconic_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_iconic_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -364,7 +364,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "inverted")]
-    pub fn connect_inverted_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_inverted_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_inverted_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -387,7 +387,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "menu-name")]
-    pub fn connect_menu_name_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_menu_name_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_menu_name_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -410,7 +410,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "role")]
-    pub fn connect_role_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_role_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_role_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -433,7 +433,7 @@ impl ModelButton {
     }
 
     #[doc(alias = "text")]
-    pub fn connect_text_notify<F: Fn(&ModelButton) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_text_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_text_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -458,10 +458,7 @@ impl ModelButton {
     #[cfg(any(feature = "v3_24", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_24")))]
     #[doc(alias = "use-markup")]
-    pub fn connect_use_markup_notify<F: Fn(&ModelButton) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_use_markup_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_use_markup_trampoline<F: Fn(&ModelButton) + 'static>(
             this: *mut ffi::GtkModelButton,
             _param_spec: glib::ffi::gpointer,
@@ -735,7 +732,7 @@ impl ModelButtonBuilder {
         self
     }
 
-    pub fn icon<P: IsA<gio::Icon>>(mut self, icon: &P) -> Self {
+    pub fn icon(mut self, icon: &impl IsA<gio::Icon>) -> Self {
         self.icon = Some(icon.clone().upcast());
         self
     }
@@ -777,7 +774,7 @@ impl ModelButtonBuilder {
         self
     }
 
-    pub fn image<P: IsA<Widget>>(mut self, image: &P) -> Self {
+    pub fn image(mut self, image: &impl IsA<Widget>) -> Self {
         self.image = Some(image.clone().upcast());
         self
     }
@@ -807,7 +804,7 @@ impl ModelButtonBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -929,7 +926,7 @@ impl ModelButtonBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }

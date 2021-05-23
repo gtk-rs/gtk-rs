@@ -244,7 +244,7 @@ impl HeaderBarBuilder {
             .expect("Failed to create an instance of HeaderBar")
     }
 
-    pub fn custom_title<P: IsA<Widget>>(mut self, custom_title: &P) -> Self {
+    pub fn custom_title(mut self, custom_title: &impl IsA<Widget>) -> Self {
         self.custom_title = Some(custom_title.clone().upcast());
         self
     }
@@ -289,7 +289,7 @@ impl HeaderBarBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -411,7 +411,7 @@ impl HeaderBarBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -490,13 +490,13 @@ pub trait HeaderBarExt: 'static {
     fn title(&self) -> Option<glib::GString>;
 
     #[doc(alias = "gtk_header_bar_pack_end")]
-    fn pack_end<P: IsA<Widget>>(&self, child: &P);
+    fn pack_end(&self, child: &impl IsA<Widget>);
 
     #[doc(alias = "gtk_header_bar_pack_start")]
-    fn pack_start<P: IsA<Widget>>(&self, child: &P);
+    fn pack_start(&self, child: &impl IsA<Widget>);
 
     #[doc(alias = "gtk_header_bar_set_custom_title")]
-    fn set_custom_title<P: IsA<Widget>>(&self, title_widget: Option<&P>);
+    fn set_custom_title(&self, title_widget: Option<&impl IsA<Widget>>);
 
     #[doc(alias = "gtk_header_bar_set_decoration_layout")]
     fn set_decoration_layout(&self, layout: Option<&str>);
@@ -608,7 +608,7 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
         }
     }
 
-    fn pack_end<P: IsA<Widget>>(&self, child: &P) {
+    fn pack_end(&self, child: &impl IsA<Widget>) {
         unsafe {
             ffi::gtk_header_bar_pack_end(
                 self.as_ref().to_glib_none().0,
@@ -617,7 +617,7 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
         }
     }
 
-    fn pack_start<P: IsA<Widget>>(&self, child: &P) {
+    fn pack_start(&self, child: &impl IsA<Widget>) {
         unsafe {
             ffi::gtk_header_bar_pack_start(
                 self.as_ref().to_glib_none().0,
@@ -626,7 +626,7 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
         }
     }
 
-    fn set_custom_title<P: IsA<Widget>>(&self, title_widget: Option<&P>) {
+    fn set_custom_title(&self, title_widget: Option<&impl IsA<Widget>>) {
         unsafe {
             ffi::gtk_header_bar_set_custom_title(
                 self.as_ref().to_glib_none().0,
@@ -779,13 +779,14 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "custom-title")]
     fn connect_custom_title_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_custom_title_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_custom_title_trampoline<
+            P: IsA<HeaderBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -804,13 +805,14 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "decoration-layout")]
     fn connect_decoration_layout_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_decoration_layout_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_decoration_layout_trampoline<
+            P: IsA<HeaderBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -832,13 +834,14 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn notify_decoration_layout_set_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_decoration_layout_set_trampoline<
+            P: IsA<HeaderBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -857,13 +860,14 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "has-subtitle")]
     fn connect_has_subtitle_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_has_subtitle_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_has_subtitle_trampoline<
+            P: IsA<HeaderBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -882,13 +886,14 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "show-close-button")]
     fn connect_show_close_button_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_close_button_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_close_button_trampoline<
+            P: IsA<HeaderBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -907,13 +912,11 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "spacing")]
     fn connect_spacing_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_spacing_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_spacing_trampoline<P: IsA<HeaderBar>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -932,13 +935,11 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "subtitle")]
     fn connect_subtitle_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_subtitle_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_subtitle_trampoline<P: IsA<HeaderBar>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -957,13 +958,11 @@ impl<O: IsA<HeaderBar>> HeaderBarExt for O {
 
     #[doc(alias = "title")]
     fn connect_title_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_title_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_title_trampoline<P: IsA<HeaderBar>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkHeaderBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<HeaderBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&HeaderBar::from_glib_borrow(this).unsafe_cast_ref())
         }

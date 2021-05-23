@@ -37,7 +37,7 @@ impl MenuBar {
 
     #[doc(alias = "gtk_menu_bar_new_from_model")]
     #[doc(alias = "new_from_model")]
-    pub fn from_model<P: IsA<gio::MenuModel>>(model: &P) -> MenuBar {
+    pub fn from_model(model: &impl IsA<gio::MenuModel>) -> MenuBar {
         assert_initialized_main_thread!();
         unsafe {
             Widget::from_glib_none(ffi::gtk_menu_bar_new_from_model(
@@ -256,7 +256,7 @@ impl MenuBarBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -378,7 +378,7 @@ impl MenuBarBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -490,13 +490,14 @@ impl<O: IsA<MenuBar>> MenuBarExt for O {
 
     #[doc(alias = "child-pack-direction")]
     fn connect_child_pack_direction_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_child_pack_direction_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_child_pack_direction_trampoline<
+            P: IsA<MenuBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMenuBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuBar::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -515,13 +516,14 @@ impl<O: IsA<MenuBar>> MenuBarExt for O {
 
     #[doc(alias = "pack-direction")]
     fn connect_pack_direction_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_pack_direction_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_pack_direction_trampoline<
+            P: IsA<MenuBar>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMenuBar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuBar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuBar::from_glib_borrow(this).unsafe_cast_ref())
         }

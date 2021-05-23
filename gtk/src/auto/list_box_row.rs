@@ -245,7 +245,7 @@ impl ListBoxRowBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -367,7 +367,7 @@ impl ListBoxRowBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -457,7 +457,7 @@ pub trait ListBoxRowExt: 'static {
     fn set_activatable(&self, activatable: bool);
 
     #[doc(alias = "gtk_list_box_row_set_header")]
-    fn set_header<P: IsA<Widget>>(&self, header: Option<&P>);
+    fn set_header(&self, header: Option<&impl IsA<Widget>>);
 
     #[doc(alias = "gtk_list_box_row_set_selectable")]
     fn set_selectable(&self, selectable: bool);
@@ -526,7 +526,7 @@ impl<O: IsA<ListBoxRow>> ListBoxRowExt for O {
         }
     }
 
-    fn set_header<P: IsA<Widget>>(&self, header: Option<&P>) {
+    fn set_header(&self, header: Option<&impl IsA<Widget>>) {
         unsafe {
             ffi::gtk_list_box_row_set_header(
                 self.as_ref().to_glib_none().0,
@@ -546,12 +546,10 @@ impl<O: IsA<ListBoxRow>> ListBoxRowExt for O {
 
     #[doc(alias = "activate")]
     fn connect_activate<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn activate_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn activate_trampoline<P: IsA<ListBoxRow>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkListBoxRow,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ListBoxRow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ListBoxRow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -578,13 +576,14 @@ impl<O: IsA<ListBoxRow>> ListBoxRowExt for O {
 
     #[doc(alias = "activatable")]
     fn connect_activatable_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_activatable_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_activatable_trampoline<
+            P: IsA<ListBoxRow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkListBoxRow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ListBoxRow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ListBoxRow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -603,13 +602,14 @@ impl<O: IsA<ListBoxRow>> ListBoxRowExt for O {
 
     #[doc(alias = "selectable")]
     fn connect_selectable_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_selectable_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_selectable_trampoline<
+            P: IsA<ListBoxRow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkListBoxRow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ListBoxRow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ListBoxRow::from_glib_borrow(this).unsafe_cast_ref())
         }

@@ -217,7 +217,7 @@ impl StackSidebarBuilder {
             .expect("Failed to create an instance of StackSidebar")
     }
 
-    pub fn stack<P: IsA<Stack>>(mut self, stack: &P) -> Self {
+    pub fn stack(mut self, stack: &impl IsA<Stack>) -> Self {
         self.stack = Some(stack.clone().upcast());
         self
     }
@@ -227,7 +227,7 @@ impl StackSidebarBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -349,7 +349,7 @@ impl StackSidebarBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -408,7 +408,7 @@ pub trait StackSidebarExt: 'static {
     fn stack(&self) -> Option<Stack>;
 
     #[doc(alias = "gtk_stack_sidebar_set_stack")]
-    fn set_stack<P: IsA<Stack>>(&self, stack: &P);
+    fn set_stack(&self, stack: &impl IsA<Stack>);
 
     #[doc(alias = "stack")]
     fn connect_stack_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId;
@@ -423,7 +423,7 @@ impl<O: IsA<StackSidebar>> StackSidebarExt for O {
         }
     }
 
-    fn set_stack<P: IsA<Stack>>(&self, stack: &P) {
+    fn set_stack(&self, stack: &impl IsA<Stack>) {
         unsafe {
             ffi::gtk_stack_sidebar_set_stack(
                 self.as_ref().to_glib_none().0,
@@ -434,13 +434,11 @@ impl<O: IsA<StackSidebar>> StackSidebarExt for O {
 
     #[doc(alias = "stack")]
     fn connect_stack_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_stack_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_stack_trampoline<P: IsA<StackSidebar>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkStackSidebar,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<StackSidebar>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&StackSidebar::from_glib_borrow(this).unsafe_cast_ref())
         }
