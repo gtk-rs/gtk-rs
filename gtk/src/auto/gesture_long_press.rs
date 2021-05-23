@@ -29,7 +29,7 @@ glib::wrapper! {
 
 impl GestureLongPress {
     #[doc(alias = "gtk_gesture_long_press_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P) -> GestureLongPress {
+    pub fn new(widget: &impl IsA<Widget>) -> GestureLongPress {
         skip_assert_initialized!();
         unsafe {
             Gesture::from_glib_full(ffi::gtk_gesture_long_press_new(
@@ -73,7 +73,7 @@ impl GestureLongPress {
     }
 
     #[doc(alias = "cancelled")]
-    pub fn connect_cancelled<F: Fn(&GestureLongPress) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_cancelled<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn cancelled_trampoline<F: Fn(&GestureLongPress) + 'static>(
             this: *mut ffi::GtkGestureLongPress,
             f: glib::ffi::gpointer,
@@ -95,10 +95,7 @@ impl GestureLongPress {
     }
 
     #[doc(alias = "pressed")]
-    pub fn connect_pressed<F: Fn(&GestureLongPress, f64, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_pressed<F: Fn(&Self, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn pressed_trampoline<F: Fn(&GestureLongPress, f64, f64) + 'static>(
             this: *mut ffi::GtkGestureLongPress,
             x: libc::c_double,
@@ -122,10 +119,7 @@ impl GestureLongPress {
     }
 
     #[doc(alias = "delay-factor")]
-    pub fn connect_delay_factor_notify<F: Fn(&GestureLongPress) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_delay_factor_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_delay_factor_trampoline<F: Fn(&GestureLongPress) + 'static>(
             this: *mut ffi::GtkGestureLongPress,
             _param_spec: glib::ffi::gpointer,
@@ -236,7 +230,7 @@ impl GestureLongPressBuilder {
         self
     }
 
-    pub fn widget<P: IsA<Widget>>(mut self, widget: &P) -> Self {
+    pub fn widget(mut self, widget: &impl IsA<Widget>) -> Self {
         self.widget = Some(widget.clone().upcast());
         self
     }

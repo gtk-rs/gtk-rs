@@ -36,13 +36,13 @@ glib::wrapper! {
 
 impl MessageDialog {
     //#[doc(alias = "gtk_message_dialog_new")]
-    //pub fn new<P: IsA<Window>>(parent: Option<&P>, flags: DialogFlags, type_: MessageType, buttons: ButtonsType, message_format: Option<&str>, : /*Unknown conversion*//*Unimplemented*/Fundamental: VarArgs) -> MessageDialog {
+    //pub fn new(parent: Option<&impl IsA<Window>>, flags: DialogFlags, type_: MessageType, buttons: ButtonsType, message_format: Option<&str>, : /*Unknown conversion*//*Unimplemented*/Fundamental: VarArgs) -> MessageDialog {
     //    unsafe { TODO: call ffi:gtk_message_dialog_new() }
     //}
 
     //#[doc(alias = "gtk_message_dialog_new_with_markup")]
     //#[doc(alias = "new_with_markup")]
-    //pub fn with_markup<P: IsA<Window>>(parent: Option<&P>, flags: DialogFlags, type_: MessageType, buttons: ButtonsType, message_format: Option<&str>, : /*Unknown conversion*//*Unimplemented*/Fundamental: VarArgs) -> MessageDialog {
+    //pub fn with_markup(parent: Option<&impl IsA<Window>>, flags: DialogFlags, type_: MessageType, buttons: ButtonsType, message_format: Option<&str>, : /*Unknown conversion*//*Unimplemented*/Fundamental: VarArgs) -> MessageDialog {
     //    unsafe { TODO: call ffi:gtk_message_dialog_new_with_markup() }
     //}
 
@@ -398,12 +398,12 @@ impl MessageDialogBuilder {
         self
     }
 
-    pub fn application<P: IsA<Application>>(mut self, application: &P) -> Self {
+    pub fn application(mut self, application: &impl IsA<Application>) -> Self {
         self.application = Some(application.clone().upcast());
         self
     }
 
-    pub fn attached_to<P: IsA<Widget>>(mut self, attached_to: &P) -> Self {
+    pub fn attached_to(mut self, attached_to: &impl IsA<Widget>) -> Self {
         self.attached_to = Some(attached_to.clone().upcast());
         self
     }
@@ -508,7 +508,7 @@ impl MessageDialogBuilder {
         self
     }
 
-    pub fn transient_for<P: IsA<Window>>(mut self, transient_for: &P) -> Self {
+    pub fn transient_for(mut self, transient_for: &impl IsA<Window>) -> Self {
         self.transient_for = Some(transient_for.clone().upcast());
         self
     }
@@ -538,7 +538,7 @@ impl MessageDialogBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -660,7 +660,7 @@ impl MessageDialogBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -922,13 +922,14 @@ impl<O: IsA<MessageDialog>> MessageDialogExt for O {
 
     #[doc(alias = "message-area")]
     fn connect_message_area_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_message_area_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_message_area_trampoline<
+            P: IsA<MessageDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMessageDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MessageDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MessageDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -947,13 +948,14 @@ impl<O: IsA<MessageDialog>> MessageDialogExt for O {
 
     #[doc(alias = "message-type")]
     fn connect_message_type_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_message_type_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_message_type_trampoline<
+            P: IsA<MessageDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMessageDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MessageDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MessageDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -972,13 +974,14 @@ impl<O: IsA<MessageDialog>> MessageDialogExt for O {
 
     #[doc(alias = "secondary-text")]
     fn connect_secondary_text_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_secondary_text_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_secondary_text_trampoline<
+            P: IsA<MessageDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMessageDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MessageDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MessageDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -997,13 +1000,14 @@ impl<O: IsA<MessageDialog>> MessageDialogExt for O {
 
     #[doc(alias = "secondary-use-markup")]
     fn connect_secondary_use_markup_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_secondary_use_markup_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_secondary_use_markup_trampoline<
+            P: IsA<MessageDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMessageDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MessageDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MessageDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1022,13 +1026,11 @@ impl<O: IsA<MessageDialog>> MessageDialogExt for O {
 
     #[doc(alias = "text")]
     fn connect_text_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_text_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_text_trampoline<P: IsA<MessageDialog>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMessageDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MessageDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MessageDialog::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1047,13 +1049,14 @@ impl<O: IsA<MessageDialog>> MessageDialogExt for O {
 
     #[doc(alias = "use-markup")]
     fn connect_use_markup_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_use_markup_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_use_markup_trampoline<
+            P: IsA<MessageDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMessageDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MessageDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MessageDialog::from_glib_borrow(this).unsafe_cast_ref())
         }

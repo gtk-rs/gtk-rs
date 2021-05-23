@@ -320,7 +320,7 @@ impl AppChooserButtonBuilder {
         self
     }
 
-    pub fn cell_area<P: IsA<CellArea>>(mut self, cell_area: &P) -> Self {
+    pub fn cell_area(mut self, cell_area: &impl IsA<CellArea>) -> Self {
         self.cell_area = Some(cell_area.clone().upcast());
         self
     }
@@ -350,7 +350,7 @@ impl AppChooserButtonBuilder {
         self
     }
 
-    pub fn model<P: IsA<TreeModel>>(mut self, model: &P) -> Self {
+    pub fn model(mut self, model: &impl IsA<TreeModel>) -> Self {
         self.model = Some(model.clone().upcast());
         self
     }
@@ -375,7 +375,7 @@ impl AppChooserButtonBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -497,7 +497,7 @@ impl AppChooserButtonBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -562,7 +562,7 @@ pub const NONE_APP_CHOOSER_BUTTON: Option<&AppChooserButton> = None;
 
 pub trait AppChooserButtonExt: 'static {
     #[doc(alias = "gtk_app_chooser_button_append_custom_item")]
-    fn append_custom_item<P: IsA<gio::Icon>>(&self, name: &str, label: &str, icon: &P);
+    fn append_custom_item(&self, name: &str, label: &str, icon: &impl IsA<gio::Icon>);
 
     #[doc(alias = "gtk_app_chooser_button_append_separator")]
     fn append_separator(&self);
@@ -609,7 +609,7 @@ pub trait AppChooserButtonExt: 'static {
 }
 
 impl<O: IsA<AppChooserButton>> AppChooserButtonExt for O {
-    fn append_custom_item<P: IsA<gio::Icon>>(&self, name: &str, label: &str, icon: &P) {
+    fn append_custom_item(&self, name: &str, label: &str, icon: &impl IsA<gio::Icon>) {
         unsafe {
             ffi::gtk_app_chooser_button_append_custom_item(
                 self.as_ref().to_glib_none().0,
@@ -692,13 +692,14 @@ impl<O: IsA<AppChooserButton>> AppChooserButtonExt for O {
         detail: Option<&str>,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn custom_item_activated_trampoline<P, F: Fn(&P, &str) + 'static>(
+        unsafe extern "C" fn custom_item_activated_trampoline<
+            P: IsA<AppChooserButton>,
+            F: Fn(&P, &str) + 'static,
+        >(
             this: *mut ffi::GtkAppChooserButton,
             item_name: *mut libc::c_char,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<AppChooserButton>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &AppChooserButton::from_glib_borrow(this).unsafe_cast_ref(),
@@ -725,13 +726,14 @@ impl<O: IsA<AppChooserButton>> AppChooserButtonExt for O {
 
     #[doc(alias = "heading")]
     fn connect_heading_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_heading_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_heading_trampoline<
+            P: IsA<AppChooserButton>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkAppChooserButton,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<AppChooserButton>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&AppChooserButton::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -750,13 +752,14 @@ impl<O: IsA<AppChooserButton>> AppChooserButtonExt for O {
 
     #[doc(alias = "show-default-item")]
     fn connect_show_default_item_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_default_item_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_default_item_trampoline<
+            P: IsA<AppChooserButton>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkAppChooserButton,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<AppChooserButton>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&AppChooserButton::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -775,13 +778,14 @@ impl<O: IsA<AppChooserButton>> AppChooserButtonExt for O {
 
     #[doc(alias = "show-dialog-item")]
     fn connect_show_dialog_item_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_dialog_item_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_dialog_item_trampoline<
+            P: IsA<AppChooserButton>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkAppChooserButton,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<AppChooserButton>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&AppChooserButton::from_glib_borrow(this).unsafe_cast_ref())
         }

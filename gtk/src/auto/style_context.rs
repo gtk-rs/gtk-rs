@@ -46,9 +46,9 @@ impl StyleContext {
     }
 
     #[doc(alias = "gtk_style_context_add_provider_for_screen")]
-    pub fn add_provider_for_screen<P: IsA<StyleProvider>>(
+    pub fn add_provider_for_screen(
         screen: &gdk::Screen,
-        provider: &P,
+        provider: &impl IsA<StyleProvider>,
         priority: u32,
     ) {
         skip_assert_initialized!();
@@ -62,7 +62,7 @@ impl StyleContext {
     }
 
     #[doc(alias = "gtk_style_context_remove_provider_for_screen")]
-    pub fn remove_provider_for_screen<P: IsA<StyleProvider>>(screen: &gdk::Screen, provider: &P) {
+    pub fn remove_provider_for_screen(screen: &gdk::Screen, provider: &impl IsA<StyleProvider>) {
         skip_assert_initialized!();
         unsafe {
             ffi::gtk_style_context_remove_provider_for_screen(
@@ -134,7 +134,7 @@ impl StyleContextBuilder {
         self
     }
 
-    pub fn parent<P: IsA<StyleContext>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<StyleContext>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -152,7 +152,7 @@ pub trait StyleContextExt: 'static {
     fn add_class(&self, class_name: &str);
 
     #[doc(alias = "gtk_style_context_add_provider")]
-    fn add_provider<P: IsA<StyleProvider>>(&self, provider: &P, priority: u32);
+    fn add_provider(&self, provider: &impl IsA<StyleProvider>, priority: u32);
 
     //#[doc(alias = "gtk_style_context_get")]
     //fn get(&self, state: StateFlags, : /*Unknown conversion*//*Unimplemented*/Fundamental: VarArgs);
@@ -238,7 +238,7 @@ pub trait StyleContextExt: 'static {
     fn remove_class(&self, class_name: &str);
 
     #[doc(alias = "gtk_style_context_remove_provider")]
-    fn remove_provider<P: IsA<StyleProvider>>(&self, provider: &P);
+    fn remove_provider(&self, provider: &impl IsA<StyleProvider>);
 
     #[doc(alias = "gtk_style_context_restore")]
     fn restore(&self);
@@ -253,7 +253,7 @@ pub trait StyleContextExt: 'static {
     fn set_junction_sides(&self, sides: JunctionSides);
 
     #[doc(alias = "gtk_style_context_set_parent")]
-    fn set_parent<P: IsA<StyleContext>>(&self, parent: Option<&P>);
+    fn set_parent(&self, parent: Option<&impl IsA<StyleContext>>);
 
     #[doc(alias = "gtk_style_context_set_path")]
     fn set_path(&self, path: &WidgetPath);
@@ -308,7 +308,7 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
         }
     }
 
-    fn add_provider<P: IsA<StyleProvider>>(&self, provider: &P, priority: u32) {
+    fn add_provider(&self, provider: &impl IsA<StyleProvider>, priority: u32) {
         unsafe {
             ffi::gtk_style_context_add_provider(
                 self.as_ref().to_glib_none().0,
@@ -510,7 +510,7 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
         }
     }
 
-    fn remove_provider<P: IsA<StyleProvider>>(&self, provider: &P) {
+    fn remove_provider(&self, provider: &impl IsA<StyleProvider>) {
         unsafe {
             ffi::gtk_style_context_remove_provider(
                 self.as_ref().to_glib_none().0,
@@ -549,7 +549,7 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
         }
     }
 
-    fn set_parent<P: IsA<StyleContext>>(&self, parent: Option<&P>) {
+    fn set_parent(&self, parent: Option<&impl IsA<StyleContext>>) {
         unsafe {
             ffi::gtk_style_context_set_parent(
                 self.as_ref().to_glib_none().0,
@@ -646,12 +646,10 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
 
     #[doc(alias = "changed")]
     fn connect_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn changed_trampoline<P: IsA<StyleContext>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkStyleContext,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<StyleContext>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&StyleContext::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -670,13 +668,14 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
 
     #[doc(alias = "direction")]
     fn connect_direction_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_direction_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_direction_trampoline<
+            P: IsA<StyleContext>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkStyleContext,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<StyleContext>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&StyleContext::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -695,13 +694,14 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
 
     #[doc(alias = "paint-clock")]
     fn connect_paint_clock_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_paint_clock_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_paint_clock_trampoline<
+            P: IsA<StyleContext>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkStyleContext,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<StyleContext>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&StyleContext::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -720,13 +720,11 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
 
     #[doc(alias = "parent")]
     fn connect_parent_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_parent_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_parent_trampoline<P: IsA<StyleContext>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkStyleContext,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<StyleContext>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&StyleContext::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -745,13 +743,11 @@ impl<O: IsA<StyleContext>> StyleContextExt for O {
 
     #[doc(alias = "screen")]
     fn connect_screen_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_screen_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_screen_trampoline<P: IsA<StyleContext>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkStyleContext,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<StyleContext>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&StyleContext::from_glib_borrow(this).unsafe_cast_ref())
         }

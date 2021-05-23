@@ -85,7 +85,7 @@ pub const NONE_SIZE_GROUP: Option<&SizeGroup> = None;
 
 pub trait SizeGroupExt: 'static {
     #[doc(alias = "gtk_size_group_add_widget")]
-    fn add_widget<P: IsA<Widget>>(&self, widget: &P);
+    fn add_widget(&self, widget: &impl IsA<Widget>);
 
     #[cfg_attr(feature = "v3_22", deprecated = "Since 3.22")]
     #[doc(alias = "gtk_size_group_get_ignore_hidden")]
@@ -101,7 +101,7 @@ pub trait SizeGroupExt: 'static {
     fn widgets(&self) -> Vec<Widget>;
 
     #[doc(alias = "gtk_size_group_remove_widget")]
-    fn remove_widget<P: IsA<Widget>>(&self, widget: &P);
+    fn remove_widget(&self, widget: &impl IsA<Widget>);
 
     #[cfg_attr(feature = "v3_22", deprecated = "Since 3.22")]
     #[doc(alias = "gtk_size_group_set_ignore_hidden")]
@@ -119,7 +119,7 @@ pub trait SizeGroupExt: 'static {
 }
 
 impl<O: IsA<SizeGroup>> SizeGroupExt for O {
-    fn add_widget<P: IsA<Widget>>(&self, widget: &P) {
+    fn add_widget(&self, widget: &impl IsA<Widget>) {
         unsafe {
             ffi::gtk_size_group_add_widget(
                 self.as_ref().to_glib_none().0,
@@ -148,7 +148,7 @@ impl<O: IsA<SizeGroup>> SizeGroupExt for O {
         }
     }
 
-    fn remove_widget<P: IsA<Widget>>(&self, widget: &P) {
+    fn remove_widget(&self, widget: &impl IsA<Widget>) {
         unsafe {
             ffi::gtk_size_group_remove_widget(
                 self.as_ref().to_glib_none().0,
@@ -174,13 +174,14 @@ impl<O: IsA<SizeGroup>> SizeGroupExt for O {
 
     #[doc(alias = "ignore-hidden")]
     fn connect_ignore_hidden_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_ignore_hidden_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_ignore_hidden_trampoline<
+            P: IsA<SizeGroup>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkSizeGroup,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SizeGroup>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SizeGroup::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -199,13 +200,11 @@ impl<O: IsA<SizeGroup>> SizeGroupExt for O {
 
     #[doc(alias = "mode")]
     fn connect_mode_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_mode_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_mode_trampoline<P: IsA<SizeGroup>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkSizeGroup,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<SizeGroup>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&SizeGroup::from_glib_borrow(this).unsafe_cast_ref())
         }

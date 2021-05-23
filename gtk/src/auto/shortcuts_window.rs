@@ -331,12 +331,12 @@ impl ShortcutsWindowBuilder {
         self
     }
 
-    pub fn application<P: IsA<Application>>(mut self, application: &P) -> Self {
+    pub fn application(mut self, application: &impl IsA<Application>) -> Self {
         self.application = Some(application.clone().upcast());
         self
     }
 
-    pub fn attached_to<P: IsA<Widget>>(mut self, attached_to: &P) -> Self {
+    pub fn attached_to(mut self, attached_to: &impl IsA<Widget>) -> Self {
         self.attached_to = Some(attached_to.clone().upcast());
         self
     }
@@ -441,7 +441,7 @@ impl ShortcutsWindowBuilder {
         self
     }
 
-    pub fn transient_for<P: IsA<Window>>(mut self, transient_for: &P) -> Self {
+    pub fn transient_for(mut self, transient_for: &impl IsA<Window>) -> Self {
         self.transient_for = Some(transient_for.clone().upcast());
         self
     }
@@ -471,7 +471,7 @@ impl ShortcutsWindowBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -593,7 +593,7 @@ impl ShortcutsWindowBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -727,12 +727,10 @@ impl<O: IsA<ShortcutsWindow>> ShortcutsWindowExt for O {
 
     #[doc(alias = "close")]
     fn connect_close<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn close_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn close_trampoline<P: IsA<ShortcutsWindow>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkShortcutsWindow,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ShortcutsWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ShortcutsWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -759,12 +757,10 @@ impl<O: IsA<ShortcutsWindow>> ShortcutsWindowExt for O {
 
     #[doc(alias = "search")]
     fn connect_search<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn search_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn search_trampoline<P: IsA<ShortcutsWindow>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkShortcutsWindow,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ShortcutsWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ShortcutsWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -791,13 +787,14 @@ impl<O: IsA<ShortcutsWindow>> ShortcutsWindowExt for O {
 
     #[doc(alias = "section-name")]
     fn connect_section_name_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_section_name_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_section_name_trampoline<
+            P: IsA<ShortcutsWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkShortcutsWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ShortcutsWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ShortcutsWindow::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -816,13 +813,14 @@ impl<O: IsA<ShortcutsWindow>> ShortcutsWindowExt for O {
 
     #[doc(alias = "view-name")]
     fn connect_view_name_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_view_name_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_view_name_trampoline<
+            P: IsA<ShortcutsWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkShortcutsWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ShortcutsWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ShortcutsWindow::from_glib_borrow(this).unsafe_cast_ref())
         }

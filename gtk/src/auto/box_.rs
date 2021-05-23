@@ -247,7 +247,7 @@ impl BoxBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -369,7 +369,7 @@ impl BoxBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -445,27 +445,27 @@ pub trait BoxExt: 'static {
     fn spacing(&self) -> i32;
 
     #[doc(alias = "gtk_box_pack_end")]
-    fn pack_end<P: IsA<Widget>>(&self, child: &P, expand: bool, fill: bool, padding: u32);
+    fn pack_end(&self, child: &impl IsA<Widget>, expand: bool, fill: bool, padding: u32);
 
     #[doc(alias = "gtk_box_pack_start")]
-    fn pack_start<P: IsA<Widget>>(&self, child: &P, expand: bool, fill: bool, padding: u32);
+    fn pack_start(&self, child: &impl IsA<Widget>, expand: bool, fill: bool, padding: u32);
 
     #[doc(alias = "gtk_box_query_child_packing")]
-    fn query_child_packing<P: IsA<Widget>>(&self, child: &P) -> (bool, bool, u32, PackType);
+    fn query_child_packing(&self, child: &impl IsA<Widget>) -> (bool, bool, u32, PackType);
 
     #[doc(alias = "gtk_box_reorder_child")]
-    fn reorder_child<P: IsA<Widget>>(&self, child: &P, position: i32);
+    fn reorder_child(&self, child: &impl IsA<Widget>, position: i32);
 
     #[doc(alias = "gtk_box_set_baseline_position")]
     fn set_baseline_position(&self, position: BaselinePosition);
 
     #[doc(alias = "gtk_box_set_center_widget")]
-    fn set_center_widget<P: IsA<Widget>>(&self, widget: Option<&P>);
+    fn set_center_widget(&self, widget: Option<&impl IsA<Widget>>);
 
     #[doc(alias = "gtk_box_set_child_packing")]
-    fn set_child_packing<P: IsA<Widget>>(
+    fn set_child_packing(
         &self,
-        child: &P,
+        child: &impl IsA<Widget>,
         expand: bool,
         fill: bool,
         padding: u32,
@@ -543,7 +543,7 @@ impl<O: IsA<Box>> BoxExt for O {
         unsafe { ffi::gtk_box_get_spacing(self.as_ref().to_glib_none().0) }
     }
 
-    fn pack_end<P: IsA<Widget>>(&self, child: &P, expand: bool, fill: bool, padding: u32) {
+    fn pack_end(&self, child: &impl IsA<Widget>, expand: bool, fill: bool, padding: u32) {
         unsafe {
             ffi::gtk_box_pack_end(
                 self.as_ref().to_glib_none().0,
@@ -555,7 +555,7 @@ impl<O: IsA<Box>> BoxExt for O {
         }
     }
 
-    fn pack_start<P: IsA<Widget>>(&self, child: &P, expand: bool, fill: bool, padding: u32) {
+    fn pack_start(&self, child: &impl IsA<Widget>, expand: bool, fill: bool, padding: u32) {
         unsafe {
             ffi::gtk_box_pack_start(
                 self.as_ref().to_glib_none().0,
@@ -567,7 +567,7 @@ impl<O: IsA<Box>> BoxExt for O {
         }
     }
 
-    fn query_child_packing<P: IsA<Widget>>(&self, child: &P) -> (bool, bool, u32, PackType) {
+    fn query_child_packing(&self, child: &impl IsA<Widget>) -> (bool, bool, u32, PackType) {
         unsafe {
             let mut expand = mem::MaybeUninit::uninit();
             let mut fill = mem::MaybeUninit::uninit();
@@ -594,7 +594,7 @@ impl<O: IsA<Box>> BoxExt for O {
         }
     }
 
-    fn reorder_child<P: IsA<Widget>>(&self, child: &P, position: i32) {
+    fn reorder_child(&self, child: &impl IsA<Widget>, position: i32) {
         unsafe {
             ffi::gtk_box_reorder_child(
                 self.as_ref().to_glib_none().0,
@@ -613,7 +613,7 @@ impl<O: IsA<Box>> BoxExt for O {
         }
     }
 
-    fn set_center_widget<P: IsA<Widget>>(&self, widget: Option<&P>) {
+    fn set_center_widget(&self, widget: Option<&impl IsA<Widget>>) {
         unsafe {
             ffi::gtk_box_set_center_widget(
                 self.as_ref().to_glib_none().0,
@@ -622,9 +622,9 @@ impl<O: IsA<Box>> BoxExt for O {
         }
     }
 
-    fn set_child_packing<P: IsA<Widget>>(
+    fn set_child_packing(
         &self,
-        child: &P,
+        child: &impl IsA<Widget>,
         expand: bool,
         fill: bool,
         padding: u32,
@@ -794,13 +794,14 @@ impl<O: IsA<Box>> BoxExt for O {
 
     #[doc(alias = "baseline-position")]
     fn connect_baseline_position_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_baseline_position_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_baseline_position_trampoline<
+            P: IsA<Box>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkBox,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Box>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Box::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -819,13 +820,11 @@ impl<O: IsA<Box>> BoxExt for O {
 
     #[doc(alias = "homogeneous")]
     fn connect_homogeneous_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_homogeneous_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_homogeneous_trampoline<P: IsA<Box>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkBox,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Box>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Box::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -844,13 +843,11 @@ impl<O: IsA<Box>> BoxExt for O {
 
     #[doc(alias = "spacing")]
     fn connect_spacing_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_spacing_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_spacing_trampoline<P: IsA<Box>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkBox,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Box>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Box::from_glib_borrow(this).unsafe_cast_ref())
         }

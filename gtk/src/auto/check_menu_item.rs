@@ -309,7 +309,7 @@ impl CheckMenuItemBuilder {
         self
     }
 
-    pub fn submenu<P: IsA<Menu>>(mut self, submenu: &P) -> Self {
+    pub fn submenu(mut self, submenu: &impl IsA<Menu>) -> Self {
         self.submenu = Some(submenu.clone().upcast());
         self
     }
@@ -324,7 +324,7 @@ impl CheckMenuItemBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -446,7 +446,7 @@ impl CheckMenuItemBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -607,12 +607,10 @@ impl<O: IsA<CheckMenuItem>> CheckMenuItemExt for O {
 
     #[doc(alias = "toggled")]
     fn connect_toggled<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn toggled_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn toggled_trampoline<P: IsA<CheckMenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkCheckMenuItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<CheckMenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&CheckMenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -631,13 +629,14 @@ impl<O: IsA<CheckMenuItem>> CheckMenuItemExt for O {
 
     #[doc(alias = "active")]
     fn connect_active_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_active_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_active_trampoline<
+            P: IsA<CheckMenuItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkCheckMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<CheckMenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&CheckMenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -656,13 +655,14 @@ impl<O: IsA<CheckMenuItem>> CheckMenuItemExt for O {
 
     #[doc(alias = "draw-as-radio")]
     fn connect_draw_as_radio_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_draw_as_radio_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_draw_as_radio_trampoline<
+            P: IsA<CheckMenuItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkCheckMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<CheckMenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&CheckMenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -681,13 +681,14 @@ impl<O: IsA<CheckMenuItem>> CheckMenuItemExt for O {
 
     #[doc(alias = "inconsistent")]
     fn connect_inconsistent_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_inconsistent_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_inconsistent_trampoline<
+            P: IsA<CheckMenuItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkCheckMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<CheckMenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&CheckMenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }

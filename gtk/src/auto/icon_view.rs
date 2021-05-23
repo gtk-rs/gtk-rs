@@ -52,7 +52,7 @@ impl IconView {
 
     #[doc(alias = "gtk_icon_view_new_with_area")]
     #[doc(alias = "new_with_area")]
-    pub fn with_area<P: IsA<CellArea>>(area: &P) -> IconView {
+    pub fn with_area(area: &impl IsA<CellArea>) -> IconView {
         skip_assert_initialized!();
         unsafe {
             Widget::from_glib_none(ffi::gtk_icon_view_new_with_area(
@@ -64,7 +64,7 @@ impl IconView {
 
     #[doc(alias = "gtk_icon_view_new_with_model")]
     #[doc(alias = "new_with_model")]
-    pub fn with_model<P: IsA<TreeModel>>(model: &P) -> IconView {
+    pub fn with_model(model: &impl IsA<TreeModel>) -> IconView {
         skip_assert_initialized!();
         unsafe {
             Widget::from_glib_none(ffi::gtk_icon_view_new_with_model(
@@ -337,7 +337,7 @@ impl IconViewBuilder {
         self
     }
 
-    pub fn cell_area<P: IsA<CellArea>>(mut self, cell_area: &P) -> Self {
+    pub fn cell_area(mut self, cell_area: &impl IsA<CellArea>) -> Self {
         self.cell_area = Some(cell_area.clone().upcast());
         self
     }
@@ -377,7 +377,7 @@ impl IconViewBuilder {
         self
     }
 
-    pub fn model<P: IsA<TreeModel>>(mut self, model: &P) -> Self {
+    pub fn model(mut self, model: &impl IsA<TreeModel>) -> Self {
         self.model = Some(model.clone().upcast());
         self
     }
@@ -422,7 +422,7 @@ impl IconViewBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -539,7 +539,7 @@ impl IconViewBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -589,7 +589,7 @@ impl IconViewBuilder {
         self
     }
 
-    pub fn hadjustment<P: IsA<Adjustment>>(mut self, hadjustment: &P) -> Self {
+    pub fn hadjustment(mut self, hadjustment: &impl IsA<Adjustment>) -> Self {
         self.hadjustment = Some(hadjustment.clone().upcast());
         self
     }
@@ -599,7 +599,7 @@ impl IconViewBuilder {
         self
     }
 
-    pub fn vadjustment<P: IsA<Adjustment>>(mut self, vadjustment: &P) -> Self {
+    pub fn vadjustment(mut self, vadjustment: &impl IsA<Adjustment>) -> Self {
         self.vadjustment = Some(vadjustment.clone().upcast());
         self
     }
@@ -625,10 +625,10 @@ pub trait IconViewExt: 'static {
 
     #[doc(alias = "gtk_icon_view_get_cell_rect")]
     #[doc(alias = "get_cell_rect")]
-    fn cell_rect<P: IsA<CellRenderer>>(
+    fn cell_rect(
         &self,
         path: &TreePath,
-        cell: Option<&P>,
+        cell: Option<&impl IsA<CellRenderer>>,
     ) -> Option<gdk::Rectangle>;
 
     #[doc(alias = "gtk_icon_view_get_column_spacing")]
@@ -768,10 +768,10 @@ pub trait IconViewExt: 'static {
     fn set_columns(&self, columns: i32);
 
     #[doc(alias = "gtk_icon_view_set_cursor")]
-    fn set_cursor<P: IsA<CellRenderer>>(
+    fn set_cursor(
         &self,
         path: &TreePath,
-        cell: Option<&P>,
+        cell: Option<&impl IsA<CellRenderer>>,
         start_editing: bool,
     );
 
@@ -794,7 +794,7 @@ pub trait IconViewExt: 'static {
     fn set_markup_column(&self, column: i32);
 
     #[doc(alias = "gtk_icon_view_set_model")]
-    fn set_model<P: IsA<TreeModel>>(&self, model: Option<&P>);
+    fn set_model(&self, model: Option<&impl IsA<TreeModel>>);
 
     #[doc(alias = "gtk_icon_view_set_pixbuf_column")]
     fn set_pixbuf_column(&self, column: i32);
@@ -815,11 +815,11 @@ pub trait IconViewExt: 'static {
     fn set_text_column(&self, column: i32);
 
     #[doc(alias = "gtk_icon_view_set_tooltip_cell")]
-    fn set_tooltip_cell<P: IsA<CellRenderer>>(
+    fn set_tooltip_cell(
         &self,
         tooltip: &Tooltip,
         path: &TreePath,
-        cell: Option<&P>,
+        cell: Option<&impl IsA<CellRenderer>>,
     );
 
     #[doc(alias = "gtk_icon_view_set_tooltip_column")]
@@ -970,10 +970,10 @@ impl<O: IsA<IconView>> IconViewExt for O {
         }
     }
 
-    fn cell_rect<P: IsA<CellRenderer>>(
+    fn cell_rect(
         &self,
         path: &TreePath,
-        cell: Option<&P>,
+        cell: Option<&impl IsA<CellRenderer>>,
     ) -> Option<gdk::Rectangle> {
         unsafe {
             let mut rect = gdk::Rectangle::uninitialized();
@@ -1306,10 +1306,10 @@ impl<O: IsA<IconView>> IconViewExt for O {
         }
     }
 
-    fn set_cursor<P: IsA<CellRenderer>>(
+    fn set_cursor(
         &self,
         path: &TreePath,
-        cell: Option<&P>,
+        cell: Option<&impl IsA<CellRenderer>>,
         start_editing: bool,
     ) {
         unsafe {
@@ -1365,7 +1365,7 @@ impl<O: IsA<IconView>> IconViewExt for O {
         }
     }
 
-    fn set_model<P: IsA<TreeModel>>(&self, model: Option<&P>) {
+    fn set_model(&self, model: Option<&impl IsA<TreeModel>>) {
         unsafe {
             ffi::gtk_icon_view_set_model(
                 self.as_ref().to_glib_none().0,
@@ -1413,11 +1413,11 @@ impl<O: IsA<IconView>> IconViewExt for O {
         }
     }
 
-    fn set_tooltip_cell<P: IsA<CellRenderer>>(
+    fn set_tooltip_cell(
         &self,
         tooltip: &Tooltip,
         path: &TreePath,
-        cell: Option<&P>,
+        cell: Option<&impl IsA<CellRenderer>>,
     ) {
         unsafe {
             ffi::gtk_icon_view_set_tooltip_cell(
@@ -1491,13 +1491,13 @@ impl<O: IsA<IconView>> IconViewExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn activate_cursor_item_trampoline<P, F: Fn(&P) -> bool + 'static>(
+        unsafe extern "C" fn activate_cursor_item_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) -> bool + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             f: glib::ffi::gpointer,
-        ) -> glib::ffi::gboolean
-        where
-            P: IsA<IconView>,
-        {
+        ) -> glib::ffi::gboolean {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref()).into_glib()
         }
@@ -1527,13 +1527,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "item-activated")]
     fn connect_item_activated<F: Fn(&Self, &TreePath) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn item_activated_trampoline<P, F: Fn(&P, &TreePath) + 'static>(
+        unsafe extern "C" fn item_activated_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P, &TreePath) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             path: *mut ffi::GtkTreePath,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &IconView::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1559,17 +1560,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
         f: F,
     ) -> SignalHandlerId {
         unsafe extern "C" fn move_cursor_trampoline<
-            P,
+            P: IsA<IconView>,
             F: Fn(&P, MovementStep, i32) -> bool + 'static,
         >(
             this: *mut ffi::GtkIconView,
             step: ffi::GtkMovementStep,
             count: libc::c_int,
             f: glib::ffi::gpointer,
-        ) -> glib::ffi::gboolean
-        where
-            P: IsA<IconView>,
-        {
+        ) -> glib::ffi::gboolean {
             let f: &F = &*(f as *const F);
             f(
                 &IconView::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1604,12 +1602,10 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "select-all")]
     fn connect_select_all<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn select_all_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn select_all_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1636,12 +1632,13 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "select-cursor-item")]
     fn connect_select_cursor_item<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn select_cursor_item_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn select_cursor_item_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1668,12 +1665,10 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "selection-changed")]
     fn connect_selection_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn selection_changed_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn selection_changed_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1692,12 +1687,13 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "toggle-cursor-item")]
     fn connect_toggle_cursor_item<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn toggle_cursor_item_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn toggle_cursor_item_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1724,12 +1720,10 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "unselect-all")]
     fn connect_unselect_all<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn unselect_all_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn unselect_all_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1759,13 +1753,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
         &self,
         f: F,
     ) -> SignalHandlerId {
-        unsafe extern "C" fn notify_activate_on_single_click_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_activate_on_single_click_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1784,13 +1779,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "column-spacing")]
     fn connect_column_spacing_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_column_spacing_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_column_spacing_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1809,13 +1805,11 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "columns")]
     fn connect_columns_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_columns_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_columns_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1834,13 +1828,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "item-orientation")]
     fn connect_item_orientation_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_item_orientation_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_item_orientation_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1859,13 +1854,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "item-padding")]
     fn connect_item_padding_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_item_padding_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_item_padding_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1884,13 +1880,11 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "item-width")]
     fn connect_item_width_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_item_width_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_item_width_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1909,13 +1903,11 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "margin")]
     fn connect_margin_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_margin_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_margin_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1934,13 +1926,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "markup-column")]
     fn connect_markup_column_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_markup_column_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_markup_column_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1959,13 +1952,11 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "model")]
     fn connect_model_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_model_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_model_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1984,13 +1975,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "pixbuf-column")]
     fn connect_pixbuf_column_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_pixbuf_column_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_pixbuf_column_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -2009,13 +2001,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "reorderable")]
     fn connect_reorderable_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_reorderable_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_reorderable_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -2034,13 +2027,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "row-spacing")]
     fn connect_row_spacing_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_row_spacing_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_row_spacing_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -2059,13 +2053,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "selection-mode")]
     fn connect_selection_mode_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_selection_mode_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_selection_mode_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -2084,13 +2079,11 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "spacing")]
     fn connect_spacing_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_spacing_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_spacing_trampoline<P: IsA<IconView>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -2109,13 +2102,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "text-column")]
     fn connect_text_column_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_text_column_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_text_column_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -2134,13 +2128,14 @@ impl<O: IsA<IconView>> IconViewExt for O {
 
     #[doc(alias = "tooltip-column")]
     fn connect_tooltip_column_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_tooltip_column_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_tooltip_column_trampoline<
+            P: IsA<IconView>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkIconView,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<IconView>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&IconView::from_glib_borrow(this).unsafe_cast_ref())
         }

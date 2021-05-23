@@ -70,7 +70,7 @@ pub trait CssProviderExt: 'static {
     fn load_from_data(&self, data: &[u8]) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_css_provider_load_from_file")]
-    fn load_from_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error>;
+    fn load_from_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error>;
 
     #[doc(alias = "gtk_css_provider_load_from_path")]
     fn load_from_path(&self, path: &str) -> Result<(), glib::Error>;
@@ -108,7 +108,7 @@ impl<O: IsA<CssProvider>> CssProviderExt for O {
         }
     }
 
-    fn load_from_file<P: IsA<gio::File>>(&self, file: &P) -> Result<(), glib::Error> {
+    fn load_from_file(&self, file: &impl IsA<gio::File>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
             let _ = ffi::gtk_css_provider_load_from_file(
@@ -163,16 +163,14 @@ impl<O: IsA<CssProvider>> CssProviderExt for O {
         f: F,
     ) -> SignalHandlerId {
         unsafe extern "C" fn parsing_error_trampoline<
-            P,
+            P: IsA<CssProvider>,
             F: Fn(&P, &CssSection, &glib::Error) + 'static,
         >(
             this: *mut ffi::GtkCssProvider,
             section: *mut ffi::GtkCssSection,
             error: *mut glib::ffi::GError,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<CssProvider>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &CssProvider::from_glib_borrow(this).unsafe_cast_ref(),

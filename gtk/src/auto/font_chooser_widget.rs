@@ -285,7 +285,7 @@ impl FontChooserWidgetBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -407,7 +407,7 @@ impl FontChooserWidgetBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -518,13 +518,14 @@ impl<O: IsA<FontChooserWidget>> FontChooserWidgetExt for O {
 
     #[doc(alias = "tweak-action")]
     fn connect_tweak_action_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_tweak_action_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_tweak_action_trampoline<
+            P: IsA<FontChooserWidget>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkFontChooserWidget,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<FontChooserWidget>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&FontChooserWidget::from_glib_borrow(this).unsafe_cast_ref())
         }

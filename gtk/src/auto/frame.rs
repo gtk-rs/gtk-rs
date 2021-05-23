@@ -232,7 +232,7 @@ impl FrameBuilder {
         self
     }
 
-    pub fn label_widget<P: IsA<Widget>>(mut self, label_widget: &P) -> Self {
+    pub fn label_widget(mut self, label_widget: &impl IsA<Widget>) -> Self {
         self.label_widget = Some(label_widget.clone().upcast());
         self
     }
@@ -257,7 +257,7 @@ impl FrameBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -379,7 +379,7 @@ impl FrameBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -456,7 +456,7 @@ pub trait FrameExt: 'static {
     fn set_label_align(&self, xalign: f32, yalign: f32);
 
     #[doc(alias = "gtk_frame_set_label_widget")]
-    fn set_label_widget<P: IsA<Widget>>(&self, label_widget: Option<&P>);
+    fn set_label_widget(&self, label_widget: Option<&impl IsA<Widget>>);
 
     #[doc(alias = "gtk_frame_set_shadow_type")]
     fn set_shadow_type(&self, type_: ShadowType);
@@ -537,7 +537,7 @@ impl<O: IsA<Frame>> FrameExt for O {
         }
     }
 
-    fn set_label_widget<P: IsA<Widget>>(&self, label_widget: Option<&P>) {
+    fn set_label_widget(&self, label_widget: Option<&impl IsA<Widget>>) {
         unsafe {
             ffi::gtk_frame_set_label_widget(
                 self.as_ref().to_glib_none().0,
@@ -602,13 +602,11 @@ impl<O: IsA<Frame>> FrameExt for O {
 
     #[doc(alias = "label")]
     fn connect_label_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_label_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_label_trampoline<P: IsA<Frame>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFrame,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Frame>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Frame::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -627,13 +625,11 @@ impl<O: IsA<Frame>> FrameExt for O {
 
     #[doc(alias = "label-widget")]
     fn connect_label_widget_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_label_widget_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_label_widget_trampoline<P: IsA<Frame>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFrame,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Frame>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Frame::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -652,13 +648,11 @@ impl<O: IsA<Frame>> FrameExt for O {
 
     #[doc(alias = "label-xalign")]
     fn connect_label_xalign_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_label_xalign_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_label_xalign_trampoline<P: IsA<Frame>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFrame,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Frame>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Frame::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -677,13 +671,11 @@ impl<O: IsA<Frame>> FrameExt for O {
 
     #[doc(alias = "label-yalign")]
     fn connect_label_yalign_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_label_yalign_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_label_yalign_trampoline<P: IsA<Frame>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFrame,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Frame>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Frame::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -702,13 +694,11 @@ impl<O: IsA<Frame>> FrameExt for O {
 
     #[doc(alias = "shadow-type")]
     fn connect_shadow_type_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_shadow_type_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_shadow_type_trampoline<P: IsA<Frame>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkFrame,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Frame>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Frame::from_glib_borrow(this).unsafe_cast_ref())
         }

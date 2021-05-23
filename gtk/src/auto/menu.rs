@@ -40,7 +40,7 @@ impl Menu {
 
     #[doc(alias = "gtk_menu_new_from_model")]
     #[doc(alias = "new_from_model")]
-    pub fn from_model<P: IsA<gio::MenuModel>>(model: &P) -> Menu {
+    pub fn from_model(model: &impl IsA<gio::MenuModel>) -> Menu {
         assert_initialized_main_thread!();
         unsafe {
             Widget::from_glib_none(ffi::gtk_menu_new_from_model(
@@ -59,7 +59,7 @@ impl Menu {
 
     #[doc(alias = "gtk_menu_get_for_attach_widget")]
     #[doc(alias = "get_for_attach_widget")]
-    pub fn for_attach_widget<P: IsA<Widget>>(widget: &P) -> Vec<Widget> {
+    pub fn for_attach_widget(widget: &impl IsA<Widget>) -> Vec<Widget> {
         skip_assert_initialized!();
         unsafe {
             FromGlibPtrContainer::from_glib_none(ffi::gtk_menu_get_for_attach_widget(
@@ -294,7 +294,7 @@ impl MenuBuilder {
         glib::Object::new::<Menu>(&properties).expect("Failed to create an instance of Menu")
     }
 
-    pub fn accel_group<P: IsA<AccelGroup>>(mut self, accel_group: &P) -> Self {
+    pub fn accel_group(mut self, accel_group: &impl IsA<AccelGroup>) -> Self {
         self.accel_group = Some(accel_group.clone().upcast());
         self
     }
@@ -316,7 +316,7 @@ impl MenuBuilder {
         self
     }
 
-    pub fn attach_widget<P: IsA<Widget>>(mut self, attach_widget: &P) -> Self {
+    pub fn attach_widget(mut self, attach_widget: &impl IsA<Widget>) -> Self {
         self.attach_widget = Some(attach_widget.clone().upcast());
         self
     }
@@ -362,7 +362,7 @@ impl MenuBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -484,7 +484,7 @@ impl MenuBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -539,9 +539,9 @@ pub const NONE_MENU: Option<&Menu> = None;
 
 pub trait GtkMenuExt: 'static {
     #[doc(alias = "gtk_menu_attach")]
-    fn attach<P: IsA<Widget>>(
+    fn attach(
         &self,
-        child: &P,
+        child: &impl IsA<Widget>,
         left_attach: u32,
         right_attach: u32,
         top_attach: u32,
@@ -549,7 +549,7 @@ pub trait GtkMenuExt: 'static {
     );
 
     //#[doc(alias = "gtk_menu_attach_to_widget")]
-    //fn attach_to_widget<P: IsA<Widget>>(&self, attach_widget: &P, detacher: Option<Box_<dyn FnOnce(&Widget, &Menu) + 'static>>);
+    //fn attach_to_widget(&self, attach_widget: &impl IsA<Widget>, detacher: Option<Box_<dyn FnOnce(&Widget, &Menu) + 'static>>);
 
     #[doc(alias = "gtk_menu_detach")]
     fn detach(&self);
@@ -588,7 +588,7 @@ pub trait GtkMenuExt: 'static {
 
     //#[cfg_attr(feature = "v3_22", deprecated = "Since 3.22")]
     //#[doc(alias = "gtk_menu_popup")]
-    //fn popup<P: IsA<Widget>, Q: IsA<Widget>>(&self, parent_menu_shell: Option<&P>, parent_menu_item: Option<&Q>, func: Option<Box_<dyn FnOnce(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32);
+    //fn popup(&self, parent_menu_shell: Option<&impl IsA<Widget>>, parent_menu_item: Option<&impl IsA<Widget>>, func: Option<Box_<dyn FnOnce(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32);
 
     #[cfg(any(feature = "v3_22", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
@@ -610,9 +610,9 @@ pub trait GtkMenuExt: 'static {
     #[cfg(any(feature = "v3_22", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "gtk_menu_popup_at_widget")]
-    fn popup_at_widget<P: IsA<Widget>>(
+    fn popup_at_widget(
         &self,
-        widget: &P,
+        widget: &impl IsA<Widget>,
         widget_anchor: gdk::Gravity,
         menu_anchor: gdk::Gravity,
         trigger_event: Option<&gdk::Event>,
@@ -620,16 +620,16 @@ pub trait GtkMenuExt: 'static {
 
     //#[cfg_attr(feature = "v3_22", deprecated = "Since 3.22")]
     //#[doc(alias = "gtk_menu_popup_for_device")]
-    //fn popup_for_device<P: IsA<Widget>, Q: IsA<Widget>>(&self, device: Option<&gdk::Device>, parent_menu_shell: Option<&P>, parent_menu_item: Option<&Q>, func: Option<Box_<dyn Fn(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32);
+    //fn popup_for_device(&self, device: Option<&gdk::Device>, parent_menu_shell: Option<&impl IsA<Widget>>, parent_menu_item: Option<&impl IsA<Widget>>, func: Option<Box_<dyn Fn(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32);
 
     #[doc(alias = "gtk_menu_reorder_child")]
-    fn reorder_child<P: IsA<Widget>>(&self, child: &P, position: i32);
+    fn reorder_child(&self, child: &impl IsA<Widget>, position: i32);
 
     #[doc(alias = "gtk_menu_reposition")]
     fn reposition(&self);
 
     #[doc(alias = "gtk_menu_set_accel_group")]
-    fn set_accel_group<P: IsA<AccelGroup>>(&self, accel_group: Option<&P>);
+    fn set_accel_group(&self, accel_group: Option<&impl IsA<AccelGroup>>);
 
     #[doc(alias = "gtk_menu_set_accel_path")]
     fn set_accel_path(&self, accel_path: Option<&str>);
@@ -763,9 +763,9 @@ pub trait GtkMenuExt: 'static {
 }
 
 impl<O: IsA<Menu>> GtkMenuExt for O {
-    fn attach<P: IsA<Widget>>(
+    fn attach(
         &self,
-        child: &P,
+        child: &impl IsA<Widget>,
         left_attach: u32,
         right_attach: u32,
         top_attach: u32,
@@ -783,7 +783,7 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
         }
     }
 
-    //fn attach_to_widget<P: IsA<Widget>>(&self, attach_widget: &P, detacher: Option<Box_<dyn FnOnce(&Widget, &Menu) + 'static>>) {
+    //fn attach_to_widget(&self, attach_widget: &impl IsA<Widget>, detacher: Option<Box_<dyn FnOnce(&Widget, &Menu) + 'static>>) {
     //    unsafe { TODO: call ffi:gtk_menu_attach_to_widget() }
     //}
 
@@ -846,7 +846,7 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
         }
     }
 
-    //fn popup<P: IsA<Widget>, Q: IsA<Widget>>(&self, parent_menu_shell: Option<&P>, parent_menu_item: Option<&Q>, func: Option<Box_<dyn FnOnce(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32) {
+    //fn popup(&self, parent_menu_shell: Option<&impl IsA<Widget>>, parent_menu_item: Option<&impl IsA<Widget>>, func: Option<Box_<dyn FnOnce(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32) {
     //    unsafe { TODO: call ffi:gtk_menu_popup() }
     //}
 
@@ -885,9 +885,9 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[cfg(any(feature = "v3_22", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
-    fn popup_at_widget<P: IsA<Widget>>(
+    fn popup_at_widget(
         &self,
-        widget: &P,
+        widget: &impl IsA<Widget>,
         widget_anchor: gdk::Gravity,
         menu_anchor: gdk::Gravity,
         trigger_event: Option<&gdk::Event>,
@@ -903,11 +903,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
         }
     }
 
-    //fn popup_for_device<P: IsA<Widget>, Q: IsA<Widget>>(&self, device: Option<&gdk::Device>, parent_menu_shell: Option<&P>, parent_menu_item: Option<&Q>, func: Option<Box_<dyn Fn(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32) {
+    //fn popup_for_device(&self, device: Option<&gdk::Device>, parent_menu_shell: Option<&impl IsA<Widget>>, parent_menu_item: Option<&impl IsA<Widget>>, func: Option<Box_<dyn Fn(&Menu, i32, i32, bool) + 'static>>, button: u32, activate_time: u32) {
     //    unsafe { TODO: call ffi:gtk_menu_popup_for_device() }
     //}
 
-    fn reorder_child<P: IsA<Widget>>(&self, child: &P, position: i32) {
+    fn reorder_child(&self, child: &impl IsA<Widget>, position: i32) {
         unsafe {
             ffi::gtk_menu_reorder_child(
                 self.as_ref().to_glib_none().0,
@@ -923,7 +923,7 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
         }
     }
 
-    fn set_accel_group<P: IsA<AccelGroup>>(&self, accel_group: Option<&P>) {
+    fn set_accel_group(&self, accel_group: Option<&impl IsA<AccelGroup>>) {
         unsafe {
             ffi::gtk_menu_set_accel_group(
                 self.as_ref().to_glib_none().0,
@@ -1197,13 +1197,14 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "move-scroll")]
     fn connect_move_scroll<F: Fn(&Self, ScrollType) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn move_scroll_trampoline<P, F: Fn(&P, ScrollType) + 'static>(
+        unsafe extern "C" fn move_scroll_trampoline<
+            P: IsA<Menu>,
+            F: Fn(&P, ScrollType) + 'static,
+        >(
             this: *mut ffi::GtkMenu,
             scroll_type: ffi::GtkScrollType,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(
                 &Menu::from_glib_borrow(this).unsafe_cast_ref(),
@@ -1241,13 +1242,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "accel-group")]
     fn connect_accel_group_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_accel_group_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_accel_group_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1266,13 +1265,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "accel-path")]
     fn connect_accel_path_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_accel_path_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_accel_path_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1291,13 +1288,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "active")]
     fn connect_active_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_active_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_active_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1318,13 +1313,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "anchor-hints")]
     fn connect_anchor_hints_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_anchor_hints_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_anchor_hints_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1343,13 +1336,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "attach-widget")]
     fn connect_attach_widget_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_attach_widget_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_attach_widget_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1370,13 +1361,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "menu-type-hint")]
     fn connect_menu_type_hint_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_menu_type_hint_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_menu_type_hint_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1395,13 +1384,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "monitor")]
     fn connect_monitor_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_monitor_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_monitor_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1422,13 +1409,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "rect-anchor-dx")]
     fn connect_rect_anchor_dx_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_rect_anchor_dx_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_rect_anchor_dx_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1449,13 +1434,11 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "rect-anchor-dy")]
     fn connect_rect_anchor_dy_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_rect_anchor_dy_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_rect_anchor_dy_trampoline<P: IsA<Menu>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -1474,13 +1457,14 @@ impl<O: IsA<Menu>> GtkMenuExt for O {
 
     #[doc(alias = "reserve-toggle-size")]
     fn connect_reserve_toggle_size_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_reserve_toggle_size_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_reserve_toggle_size_trampoline<
+            P: IsA<Menu>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMenu,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Menu>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Menu::from_glib_borrow(this).unsafe_cast_ref())
         }

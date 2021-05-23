@@ -324,12 +324,12 @@ impl ApplicationWindowBuilder {
         self
     }
 
-    pub fn application<P: IsA<Application>>(mut self, application: &P) -> Self {
+    pub fn application(mut self, application: &impl IsA<Application>) -> Self {
         self.application = Some(application.clone().upcast());
         self
     }
 
-    pub fn attached_to<P: IsA<Widget>>(mut self, attached_to: &P) -> Self {
+    pub fn attached_to(mut self, attached_to: &impl IsA<Widget>) -> Self {
         self.attached_to = Some(attached_to.clone().upcast());
         self
     }
@@ -434,7 +434,7 @@ impl ApplicationWindowBuilder {
         self
     }
 
-    pub fn transient_for<P: IsA<Window>>(mut self, transient_for: &P) -> Self {
+    pub fn transient_for(mut self, transient_for: &impl IsA<Window>) -> Self {
         self.transient_for = Some(transient_for.clone().upcast());
         self
     }
@@ -464,7 +464,7 @@ impl ApplicationWindowBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -586,7 +586,7 @@ impl ApplicationWindowBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -657,7 +657,7 @@ pub trait ApplicationWindowExt: 'static {
     #[cfg(any(feature = "v3_20", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
     #[doc(alias = "gtk_application_window_set_help_overlay")]
-    fn set_help_overlay<P: IsA<ShortcutsWindow>>(&self, help_overlay: Option<&P>);
+    fn set_help_overlay(&self, help_overlay: Option<&impl IsA<ShortcutsWindow>>);
 
     #[doc(alias = "gtk_application_window_set_show_menubar")]
     fn set_show_menubar(&self, show_menubar: bool);
@@ -691,7 +691,7 @@ impl<O: IsA<ApplicationWindow>> ApplicationWindowExt for O {
 
     #[cfg(any(feature = "v3_20", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_20")))]
-    fn set_help_overlay<P: IsA<ShortcutsWindow>>(&self, help_overlay: Option<&P>) {
+    fn set_help_overlay(&self, help_overlay: Option<&impl IsA<ShortcutsWindow>>) {
         unsafe {
             ffi::gtk_application_window_set_help_overlay(
                 self.as_ref().to_glib_none().0,
@@ -711,13 +711,14 @@ impl<O: IsA<ApplicationWindow>> ApplicationWindowExt for O {
 
     #[doc(alias = "show-menubar")]
     fn connect_show_menubar_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_show_menubar_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_show_menubar_trampoline<
+            P: IsA<ApplicationWindow>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkApplicationWindow,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ApplicationWindow>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ApplicationWindow::from_glib_borrow(this).unsafe_cast_ref())
         }

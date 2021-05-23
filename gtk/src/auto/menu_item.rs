@@ -278,7 +278,7 @@ impl MenuItemBuilder {
         self
     }
 
-    pub fn submenu<P: IsA<Menu>>(mut self, submenu: &P) -> Self {
+    pub fn submenu(mut self, submenu: &impl IsA<Menu>) -> Self {
         self.submenu = Some(submenu.clone().upcast());
         self
     }
@@ -293,7 +293,7 @@ impl MenuItemBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -415,7 +415,7 @@ impl MenuItemBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -515,7 +515,7 @@ pub trait GtkMenuItemExt: 'static {
     fn set_reserve_indicator(&self, reserve: bool);
 
     #[doc(alias = "gtk_menu_item_set_submenu")]
-    fn set_submenu<P: IsA<Menu>>(&self, submenu: Option<&P>);
+    fn set_submenu(&self, submenu: Option<&impl IsA<Menu>>);
 
     #[doc(alias = "gtk_menu_item_set_use_underline")]
     fn set_use_underline(&self, setting: bool);
@@ -641,7 +641,7 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
         }
     }
 
-    fn set_submenu<P: IsA<Menu>>(&self, submenu: Option<&P>) {
+    fn set_submenu(&self, submenu: Option<&impl IsA<Menu>>) {
         unsafe {
             ffi::gtk_menu_item_set_submenu(
                 self.as_ref().to_glib_none().0,
@@ -697,12 +697,10 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "activate")]
     fn connect_activate<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn activate_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn activate_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -729,12 +727,10 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "activate-item")]
     fn connect_activate_item<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn activate_item_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn activate_item_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -753,12 +749,10 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "deselect")]
     fn connect_deselect<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn deselect_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn deselect_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -777,12 +771,10 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "select")]
     fn connect_select<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn select_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn select_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -801,13 +793,14 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "toggle-size-allocate")]
     fn connect_toggle_size_allocate<F: Fn(&Self, i32) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn toggle_size_allocate_trampoline<P, F: Fn(&P, i32) + 'static>(
+        unsafe extern "C" fn toggle_size_allocate_trampoline<
+            P: IsA<MenuItem>,
+            F: Fn(&P, i32) + 'static,
+        >(
             this: *mut ffi::GtkMenuItem,
             object: libc::c_int,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref(), object)
         }
@@ -831,13 +824,11 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "accel-path")]
     fn connect_accel_path_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_accel_path_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_accel_path_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -856,13 +847,11 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "label")]
     fn connect_label_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_label_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_label_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -881,13 +870,14 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "right-justified")]
     fn connect_right_justified_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_right_justified_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_right_justified_trampoline<
+            P: IsA<MenuItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -906,13 +896,11 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "submenu")]
     fn connect_submenu_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_submenu_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_submenu_trampoline<P: IsA<MenuItem>, F: Fn(&P) + 'static>(
             this: *mut ffi::GtkMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -931,13 +919,14 @@ impl<O: IsA<MenuItem>> GtkMenuItemExt for O {
 
     #[doc(alias = "use-underline")]
     fn connect_use_underline_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_use_underline_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_use_underline_trampoline<
+            P: IsA<MenuItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkMenuItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<MenuItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&MenuItem::from_glib_borrow(this).unsafe_cast_ref())
         }

@@ -91,10 +91,7 @@ impl ShortcutLabel {
     #[cfg(any(feature = "v3_22", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "accelerator")]
-    pub fn connect_accelerator_notify<F: Fn(&ShortcutLabel) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_accelerator_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_accelerator_trampoline<F: Fn(&ShortcutLabel) + 'static>(
             this: *mut ffi::GtkShortcutLabel,
             _param_spec: glib::ffi::gpointer,
@@ -119,10 +116,7 @@ impl ShortcutLabel {
     #[cfg(any(feature = "v3_22", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v3_22")))]
     #[doc(alias = "disabled-text")]
-    pub fn connect_disabled_text_notify<F: Fn(&ShortcutLabel) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_disabled_text_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_disabled_text_trampoline<F: Fn(&ShortcutLabel) + 'static>(
             this: *mut ffi::GtkShortcutLabel,
             _param_spec: glib::ffi::gpointer,
@@ -373,7 +367,7 @@ impl ShortcutLabelBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -495,7 +489,7 @@ impl ShortcutLabelBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }

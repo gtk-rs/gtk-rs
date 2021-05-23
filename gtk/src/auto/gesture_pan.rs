@@ -32,7 +32,7 @@ glib::wrapper! {
 
 impl GesturePan {
     #[doc(alias = "gtk_gesture_pan_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P, orientation: Orientation) -> GesturePan {
+    pub fn new(widget: &impl IsA<Widget>, orientation: Orientation) -> GesturePan {
         skip_assert_initialized!();
         unsafe {
             Gesture::from_glib_full(ffi::gtk_gesture_pan_new(
@@ -64,10 +64,7 @@ impl GesturePan {
     }
 
     #[doc(alias = "pan")]
-    pub fn connect_pan<F: Fn(&GesturePan, PanDirection, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_pan<F: Fn(&Self, PanDirection, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn pan_trampoline<F: Fn(&GesturePan, PanDirection, f64) + 'static>(
             this: *mut ffi::GtkGesturePan,
             direction: ffi::GtkPanDirection,
@@ -91,10 +88,7 @@ impl GesturePan {
     }
 
     #[doc(alias = "orientation")]
-    pub fn connect_orientation_notify<F: Fn(&GesturePan) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_orientation_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn notify_orientation_trampoline<F: Fn(&GesturePan) + 'static>(
             this: *mut ffi::GtkGesturePan,
             _param_spec: glib::ffi::gpointer,
@@ -205,7 +199,7 @@ impl GesturePanBuilder {
         self
     }
 
-    pub fn widget<P: IsA<Widget>>(mut self, widget: &P) -> Self {
+    pub fn widget(mut self, widget: &impl IsA<Widget>) -> Self {
         self.widget = Some(widget.clone().upcast());
         self
     }

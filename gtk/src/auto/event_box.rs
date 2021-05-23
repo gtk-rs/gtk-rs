@@ -235,7 +235,7 @@ impl EventBoxBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -357,7 +357,7 @@ impl EventBoxBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -469,13 +469,14 @@ impl<O: IsA<EventBox>> EventBoxExt for O {
 
     #[doc(alias = "above-child")]
     fn connect_above_child_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_above_child_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_above_child_trampoline<
+            P: IsA<EventBox>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkEventBox,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<EventBox>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&EventBox::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -494,13 +495,14 @@ impl<O: IsA<EventBox>> EventBoxExt for O {
 
     #[doc(alias = "visible-window")]
     fn connect_visible_window_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_visible_window_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_visible_window_trampoline<
+            P: IsA<EventBox>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkEventBox,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<EventBox>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&EventBox::from_glib_borrow(this).unsafe_cast_ref())
         }

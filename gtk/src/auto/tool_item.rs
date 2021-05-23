@@ -249,7 +249,7 @@ impl ToolItemBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -371,7 +371,7 @@ impl ToolItemBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -501,7 +501,7 @@ pub trait ToolItemExt: 'static {
     fn set_is_important(&self, is_important: bool);
 
     #[doc(alias = "gtk_tool_item_set_proxy_menu_item")]
-    fn set_proxy_menu_item<P: IsA<Widget>>(&self, menu_item_id: &str, menu_item: Option<&P>);
+    fn set_proxy_menu_item(&self, menu_item_id: &str, menu_item: Option<&impl IsA<Widget>>);
 
     #[doc(alias = "gtk_tool_item_set_use_drag_window")]
     fn set_use_drag_window(&self, use_drag_window: bool);
@@ -690,7 +690,7 @@ impl<O: IsA<ToolItem>> ToolItemExt for O {
         }
     }
 
-    fn set_proxy_menu_item<P: IsA<Widget>>(&self, menu_item_id: &str, menu_item: Option<&P>) {
+    fn set_proxy_menu_item(&self, menu_item_id: &str, menu_item: Option<&impl IsA<Widget>>) {
         unsafe {
             ffi::gtk_tool_item_set_proxy_menu_item(
                 self.as_ref().to_glib_none().0,
@@ -739,15 +739,12 @@ impl<O: IsA<ToolItem>> ToolItemExt for O {
         f: F,
     ) -> SignalHandlerId {
         unsafe extern "C" fn create_menu_proxy_trampoline<
-            P,
+            P: IsA<ToolItem>,
             F: Fn(&P) -> glib::signal::Inhibit + 'static,
         >(
             this: *mut ffi::GtkToolItem,
             f: glib::ffi::gpointer,
-        ) -> glib::ffi::gboolean
-        where
-            P: IsA<ToolItem>,
-        {
+        ) -> glib::ffi::gboolean {
             let f: &F = &*(f as *const F);
             f(&ToolItem::from_glib_borrow(this).unsafe_cast_ref()).into_glib()
         }
@@ -766,12 +763,13 @@ impl<O: IsA<ToolItem>> ToolItemExt for O {
 
     #[doc(alias = "toolbar-reconfigured")]
     fn connect_toolbar_reconfigured<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn toolbar_reconfigured_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn toolbar_reconfigured_trampoline<
+            P: IsA<ToolItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkToolItem,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ToolItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ToolItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -790,13 +788,14 @@ impl<O: IsA<ToolItem>> ToolItemExt for O {
 
     #[doc(alias = "is-important")]
     fn connect_is_important_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_is_important_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_is_important_trampoline<
+            P: IsA<ToolItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkToolItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ToolItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ToolItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -815,13 +814,14 @@ impl<O: IsA<ToolItem>> ToolItemExt for O {
 
     #[doc(alias = "visible-horizontal")]
     fn connect_visible_horizontal_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_visible_horizontal_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_visible_horizontal_trampoline<
+            P: IsA<ToolItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkToolItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ToolItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ToolItem::from_glib_borrow(this).unsafe_cast_ref())
         }
@@ -840,13 +840,14 @@ impl<O: IsA<ToolItem>> ToolItemExt for O {
 
     #[doc(alias = "visible-vertical")]
     fn connect_visible_vertical_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_visible_vertical_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_visible_vertical_trampoline<
+            P: IsA<ToolItem>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkToolItem,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<ToolItem>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&ToolItem::from_glib_borrow(this).unsafe_cast_ref())
         }

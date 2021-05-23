@@ -90,12 +90,12 @@ pub trait BuilderExt: 'static {
     //fn connect_signals(&self, user_data: /*Unimplemented*/Option<Fundamental: Pointer>);
 
     #[doc(alias = "gtk_builder_expose_object")]
-    fn expose_object<P: IsA<glib::Object>>(&self, name: &str, object: &P);
+    fn expose_object(&self, name: &str, object: &impl IsA<glib::Object>);
 
     #[doc(alias = "gtk_builder_extend_with_template")]
-    fn extend_with_template<P: IsA<Widget>>(
+    fn extend_with_template(
         &self,
-        widget: &P,
+        widget: &impl IsA<Widget>,
         template_type: glib::types::Type,
         buffer: &str,
     ) -> Result<(), glib::Error>;
@@ -120,7 +120,7 @@ pub trait BuilderExt: 'static {
     //fn lookup_callback_symbol(&self, callback_name: &str) -> Option<Box_<dyn Fn() + 'static>>;
 
     #[doc(alias = "gtk_builder_set_application")]
-    fn set_application<P: IsA<Application>>(&self, application: &P);
+    fn set_application(&self, application: &impl IsA<Application>);
 
     #[doc(alias = "gtk_builder_set_translation_domain")]
     fn set_translation_domain(&self, domain: Option<&str>);
@@ -234,7 +234,7 @@ impl<O: IsA<Builder>> BuilderExt for O {
     //    unsafe { TODO: call ffi:gtk_builder_connect_signals() }
     //}
 
-    fn expose_object<P: IsA<glib::Object>>(&self, name: &str, object: &P) {
+    fn expose_object(&self, name: &str, object: &impl IsA<glib::Object>) {
         unsafe {
             ffi::gtk_builder_expose_object(
                 self.as_ref().to_glib_none().0,
@@ -244,9 +244,9 @@ impl<O: IsA<Builder>> BuilderExt for O {
         }
     }
 
-    fn extend_with_template<P: IsA<Widget>>(
+    fn extend_with_template(
         &self,
-        widget: &P,
+        widget: &impl IsA<Widget>,
         template_type: glib::types::Type,
         buffer: &str,
     ) -> Result<(), glib::Error> {
@@ -306,7 +306,7 @@ impl<O: IsA<Builder>> BuilderExt for O {
     //    unsafe { TODO: call ffi:gtk_builder_lookup_callback_symbol() }
     //}
 
-    fn set_application<P: IsA<Application>>(&self, application: &P) {
+    fn set_application(&self, application: &impl IsA<Application>) {
         unsafe {
             ffi::gtk_builder_set_application(
                 self.as_ref().to_glib_none().0,
@@ -372,13 +372,14 @@ impl<O: IsA<Builder>> BuilderExt for O {
 
     #[doc(alias = "translation-domain")]
     fn connect_translation_domain_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_translation_domain_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_translation_domain_trampoline<
+            P: IsA<Builder>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkBuilder,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<Builder>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&Builder::from_glib_borrow(this).unsafe_cast_ref())
         }

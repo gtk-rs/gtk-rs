@@ -36,10 +36,10 @@ glib::wrapper! {
 
 impl AppChooserDialog {
     #[doc(alias = "gtk_app_chooser_dialog_new")]
-    pub fn new<P: IsA<Window>, Q: IsA<gio::File>>(
-        parent: Option<&P>,
+    pub fn new(
+        parent: Option<&impl IsA<Window>>,
         flags: DialogFlags,
-        file: &Q,
+        file: &impl IsA<gio::File>,
     ) -> AppChooserDialog {
         assert_initialized_main_thread!();
         unsafe {
@@ -54,8 +54,8 @@ impl AppChooserDialog {
 
     #[doc(alias = "gtk_app_chooser_dialog_new_for_content_type")]
     #[doc(alias = "new_for_content_type")]
-    pub fn for_content_type<P: IsA<Window>>(
-        parent: Option<&P>,
+    pub fn for_content_type(
+        parent: Option<&impl IsA<Window>>,
         flags: DialogFlags,
         content_type: &str,
     ) -> AppChooserDialog {
@@ -370,7 +370,7 @@ impl AppChooserDialogBuilder {
             .expect("Failed to create an instance of AppChooserDialog")
     }
 
-    pub fn gfile<P: IsA<gio::File>>(mut self, gfile: &P) -> Self {
+    pub fn gfile(mut self, gfile: &impl IsA<gio::File>) -> Self {
         self.gfile = Some(gfile.clone().upcast());
         self
     }
@@ -390,12 +390,12 @@ impl AppChooserDialogBuilder {
         self
     }
 
-    pub fn application<P: IsA<Application>>(mut self, application: &P) -> Self {
+    pub fn application(mut self, application: &impl IsA<Application>) -> Self {
         self.application = Some(application.clone().upcast());
         self
     }
 
-    pub fn attached_to<P: IsA<Widget>>(mut self, attached_to: &P) -> Self {
+    pub fn attached_to(mut self, attached_to: &impl IsA<Widget>) -> Self {
         self.attached_to = Some(attached_to.clone().upcast());
         self
     }
@@ -500,7 +500,7 @@ impl AppChooserDialogBuilder {
         self
     }
 
-    pub fn transient_for<P: IsA<Window>>(mut self, transient_for: &P) -> Self {
+    pub fn transient_for(mut self, transient_for: &impl IsA<Window>) -> Self {
         self.transient_for = Some(transient_for.clone().upcast());
         self
     }
@@ -530,7 +530,7 @@ impl AppChooserDialogBuilder {
         self
     }
 
-    pub fn child<P: IsA<Widget>>(mut self, child: &P) -> Self {
+    pub fn child(mut self, child: &impl IsA<Widget>) -> Self {
         self.child = Some(child.clone().upcast());
         self
     }
@@ -652,7 +652,7 @@ impl AppChooserDialogBuilder {
         self
     }
 
-    pub fn parent<P: IsA<Container>>(mut self, parent: &P) -> Self {
+    pub fn parent(mut self, parent: &impl IsA<Container>) -> Self {
         self.parent = Some(parent.clone().upcast());
         self
     }
@@ -770,13 +770,14 @@ impl<O: IsA<AppChooserDialog>> AppChooserDialogExt for O {
 
     #[doc(alias = "heading")]
     fn connect_heading_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
-        unsafe extern "C" fn notify_heading_trampoline<P, F: Fn(&P) + 'static>(
+        unsafe extern "C" fn notify_heading_trampoline<
+            P: IsA<AppChooserDialog>,
+            F: Fn(&P) + 'static,
+        >(
             this: *mut ffi::GtkAppChooserDialog,
             _param_spec: glib::ffi::gpointer,
             f: glib::ffi::gpointer,
-        ) where
-            P: IsA<AppChooserDialog>,
-        {
+        ) {
             let f: &F = &*(f as *const F);
             f(&AppChooserDialog::from_glib_borrow(this).unsafe_cast_ref())
         }

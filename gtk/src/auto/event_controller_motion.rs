@@ -24,7 +24,7 @@ glib::wrapper! {
 
 impl EventControllerMotion {
     #[doc(alias = "gtk_event_controller_motion_new")]
-    pub fn new<P: IsA<Widget>>(widget: &P) -> EventControllerMotion {
+    pub fn new(widget: &impl IsA<Widget>) -> EventControllerMotion {
         skip_assert_initialized!();
         unsafe {
             EventController::from_glib_full(ffi::gtk_event_controller_motion_new(
@@ -35,10 +35,7 @@ impl EventControllerMotion {
     }
 
     #[doc(alias = "enter")]
-    pub fn connect_enter<F: Fn(&EventControllerMotion, f64, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_enter<F: Fn(&Self, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn enter_trampoline<F: Fn(&EventControllerMotion, f64, f64) + 'static>(
             this: *mut ffi::GtkEventControllerMotion,
             x: libc::c_double,
@@ -62,7 +59,7 @@ impl EventControllerMotion {
     }
 
     #[doc(alias = "leave")]
-    pub fn connect_leave<F: Fn(&EventControllerMotion) + 'static>(&self, f: F) -> SignalHandlerId {
+    pub fn connect_leave<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn leave_trampoline<F: Fn(&EventControllerMotion) + 'static>(
             this: *mut ffi::GtkEventControllerMotion,
             f: glib::ffi::gpointer,
@@ -84,10 +81,7 @@ impl EventControllerMotion {
     }
 
     #[doc(alias = "motion")]
-    pub fn connect_motion<F: Fn(&EventControllerMotion, f64, f64) + 'static>(
-        &self,
-        f: F,
-    ) -> SignalHandlerId {
+    pub fn connect_motion<F: Fn(&Self, f64, f64) + 'static>(&self, f: F) -> SignalHandlerId {
         unsafe extern "C" fn motion_trampoline<
             F: Fn(&EventControllerMotion, f64, f64) + 'static,
         >(
